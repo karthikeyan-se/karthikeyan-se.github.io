@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FDA eSignature TAM/SAM/SOM Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-4" x-data="calculator()">
+  <div class="max-w-xl mx-auto bg-white rounded-2xl shadow p-6">
+    <h1 class="text-2xl font-bold mb-4">FDA eSignature Market Calculator</h1>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block font-medium">Total FDA-Regulated Companies</label>
+        <input type="number" x-model.number="totalCompanies" class="w-full mt-1 p-2 border rounded" />
+      </div>
+
+      <div class="flex space-x-4">
+        <div class="flex-1">
+          <label class="block font-medium">% Digitized: <span x-text="percentDigitized + '%'" class="ml-1"></span></label>
+          <input type="range" min="0" max="100" x-model.number="percentDigitized" class="w-full mt-1" />
+        </div>
+        <div class="flex-1">
+          <label class="block font-medium">SMB ACV ($)</label>
+          <input type="number" x-model.number="acvSMB" class="w-full mt-1 p-2 border rounded" />
+        </div>
+        <div class="flex-1">
+          <label class="block font-medium">Mid-Market ACV ($)</label>
+          <input type="number" x-model.number="acvMid" class="w-full mt-1 p-2 border rounded" />
+        </div>
+      </div>
+
+      <div class="flex space-x-4">
+        <div class="flex-1">
+          <label class="block font-medium">SMB % of Market: <span x-text="smbPercent + '%'" class="ml-1"></span></label>
+          <input type="range" min="0" max="100" x-model.number="smbPercent" class="w-full mt-1" />
+        </div>
+        <div class="flex-1">
+          <label class="block font-medium">Mid-Market % of Market: <span x-text="midPercent + '%'" class="ml-1"></span></label>
+          <input type="range" min="0" max="100" x-model.number="midPercent" class="w-full mt-1" />
+        </div>
+      </div>
+
+      <div class="flex space-x-4">
+        <div class="flex-1">
+          <label class="block font-medium">SAM Coverage % (12-24 mo): <span x-text="samCoverage + '%'" class="ml-1"></span></label>
+          <input type="range" min="0" max="100" x-model.number="samCoverage" class="w-full mt-1" />
+        </div>
+        <div class="flex-1">
+          <label class="block font-medium">SOM Conversion % (12 mo): <span x-text="somConversion + '%'" class="ml-1"></span></label>
+          <input type="range" min="0" max="100" x-model.number="somConversion" class="w-full mt-1" />
+        </div>
+      </div>
+
+      <button @click="calculate" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Calculate</button>
+    </div>
+
+    <div class="mt-6 space-y-2">
+      <p><strong>TAM:</strong> $<span x-text="tam.toLocaleString()"></span></p>
+      <p><strong>SAM:</strong> $<span x-text="sam.toLocaleString()"></span></p>
+      <p><strong>SOM:</strong> $<span x-text="som.toLocaleString()"></span></p>
+    </div>
+
+    <div id="chart" class="mt-6" style="height: 300px;"></div>
+  </div>
+
+  <script>
+    function calculator() {
+      return {
+        totalCompanies: 260000,
+        percentDigitized: 50,
+        acvSMB: 300,
+        acvMid: 2300,
+        smbPercent: 80,
+        midPercent: 20,
+        samCoverage: 15,
+        somConversion: 10,
+
+        tam: 0,
+        sam: 0,
+        som: 0,
+
+        calculate() {
+          const notDigitized = this.totalCompanies * (1 - this.percentDigitized / 100);
+          const smbCount = notDigitized * (this.smbPercent / 100);
+          const midCount = notDigitized * (this.midPercent / 100);
+
+          this.tam = smbCount * this.acvSMB + midCount * this.acvMid;
+          this.sam = this.tam * (this.samCoverage / 100);
+          this.som = this.sam * (this.somConversion / 100);
+
+          this.renderChart();
+        },
+
+        renderChart() {
+          const chart = echarts.init(document.getElementById('chart'));
+          chart.setOption({
+            tooltip: { trigger: 'item' },
+            series: [
+              {
+                type: 'pie',
+                radius: '65%',
+                data: [
+                  { value: this.tam, name: 'TAM' },
+                  { value: this.sam, name: 'SAM' },
+                  { value: this.som, name: 'SOM' }
+                ]
+              }
+            ]
+          });
+        }
+      }
+    }
+  </script>
+</body>
+</html>
