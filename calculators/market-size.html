@@ -3,68 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FDA eSignature TAM/SAM/SOM Calculator</title>
+  <title>Karthikeyan - TAM/SAM/SOM Calculator</title>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 p-4" x-data="calculator()">
-  <div class="max-w-xl mx-auto bg-white rounded-2xl shadow p-6">
-    <h1 class="text-2xl font-bold mb-4">FDA eSignature Market Calculator</h1>
+  <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow p-6">
+    <h1 class="text-2xl font-bold mb-4">TAM/SAM/SOM Calculator</h1>
 
-    <div class="space-y-4">
-      <div>
-        <label class="block font-medium">Total FDA-Regulated Companies</label>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="col-span-1">
+        <label class="block font-medium">Total Companies</label>
         <input type="number" x-model.number="totalCompanies" class="w-full mt-1 p-2 border rounded" />
       </div>
-
-      <div class="flex space-x-4">
-        <div class="flex-1">
-          <label class="block font-medium">% Digitized: <span x-text="percentDigitized + '%'" class="ml-1"></span></label>
-          <input type="range" min="0" max="100" x-model.number="percentDigitized" class="w-full mt-1" />
-        </div>
-        <div class="flex-1">
-          <label class="block font-medium">SMB ACV ($)</label>
-          <input type="number" x-model.number="acvSMB" class="w-full mt-1 p-2 border rounded" />
-        </div>
-        <div class="flex-1">
-          <label class="block font-medium">Mid-Market ACV ($)</label>
-          <input type="number" x-model.number="acvMid" class="w-full mt-1 p-2 border rounded" />
-        </div>
+      <div class="col-span-2 flex justify-start space-x-4">
+        <button @click="setPreset('conservative')" class="text-sm text-blue-600 underline">Conservative</button>
+        <button @click="setPreset('moderate')" class="text-sm text-blue-600 underline">Moderate</button>
+        <button @click="setPreset('aggressive')" class="text-sm text-blue-600 underline">Aggressive</button>
       </div>
-
-      <div class="flex space-x-4">
-        <div class="flex-1">
-          <label class="block font-medium">SMB % of Market: <span x-text="smbPercent + '%'" class="ml-1"></span></label>
-          <input type="range" min="0" max="100" x-model.number="smbPercent" class="w-full mt-1" />
-        </div>
-        <div class="flex-1">
-          <label class="block font-medium">Mid-Market % of Market: <span x-text="midPercent + '%'" class="ml-1"></span></label>
-          <input type="range" min="0" max="100" x-model.number="midPercent" class="w-full mt-1" />
-        </div>
-      </div>
-
-      <div class="flex space-x-4">
-        <div class="flex-1">
-          <label class="block font-medium">SAM Coverage % (12-24 mo): <span x-text="samCoverage + '%'" class="ml-1"></span></label>
-          <input type="range" min="0" max="100" x-model.number="samCoverage" class="w-full mt-1" />
-        </div>
-        <div class="flex-1">
-          <label class="block font-medium">SOM Conversion % (12 mo): <span x-text="somConversion + '%'" class="ml-1"></span></label>
-          <input type="range" min="0" max="100" x-model.number="somConversion" class="w-full mt-1" />
-        </div>
-      </div>
-
-      <button @click="calculate" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Calculate</button>
     </div>
 
-    <div class="mt-6 space-y-2">
-      <p><strong>TAM:</strong> $<span x-text="tam.toLocaleString()"></span></p>
-      <p><strong>SAM:</strong> $<span x-text="sam.toLocaleString()"></span></p>
-      <p><strong>SOM:</strong> $<span x-text="som.toLocaleString()"></span></p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+      <div>
+        <label class="block font-medium">% Digitized: <span x-text="percentDigitized + '%'" class="ml-1"></span></label>
+        <input type="range" min="0" max="100" x-model.number="percentDigitized" class="w-full" />
+      </div>
+      <div>
+        <label class="block font-medium">SMB ACV ($)</label>
+        <input type="number" x-model.number="acvSMB" class="w-full p-2 border rounded" />
+      </div>
+      <div>
+        <label class="block font-medium">Mid-Market ACV ($)</label>
+        <input type="number" x-model.number="acvMid" class="w-full p-2 border rounded" />
+      </div>
+
+      <div>
+        <label class="block font-medium">SMB % of Market: <span x-text="smbPercent + '%'" class="ml-1"></span></label>
+        <input type="range" min="0" max="100" x-model.number="smbPercent" class="w-full" />
+      </div>
+      <div>
+        <label class="block font-medium">Mid-Market % of Market: <span x-text="midPercent + '%'" class="ml-1"></span></label>
+        <input type="range" min="0" max="100" x-model.number="midPercent" class="w-full" />
+      </div>
+
+      <div>
+        <label class="block font-medium">SAM Coverage %: <span x-text="samCoverage + '%'" class="ml-1"></span></label>
+        <input type="range" min="0" max="100" x-model.number="samCoverage" class="w-full" />
+      </div>
+      <div>
+        <label class="block font-medium">SOM Conversion %: <span x-text="somConversion + '%'" class="ml-1"></span></label>
+        <input type="range" min="0" max="100" x-model.number="somConversion" class="w-full" />
+      </div>
     </div>
 
-    <div id="chart" class="mt-6" style="height: 300px;"></div>
+    <button @click="calculate" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded">Calculate</button>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+      <div class="col-span-1 lg:col-span-2 bg-gray-50 rounded-xl p-4">
+        <div id="chart" style="height: 300px;"></div>
+      </div>
+      <div class="space-y-4 text-center">
+        <div class="bg-blue-50 p-4 rounded-xl">
+          <h3 class="text-sm text-gray-600">Total Addressable Market</h3>
+          <p class="text-xl font-bold text-blue-800" x-text="'$' + tam.toLocaleString()"></p>
+          <p class="text-sm text-gray-500">The total market demand for your product or service</p>
+        </div>
+        <div class="bg-blue-50 p-4 rounded-xl">
+          <h3 class="text-sm text-gray-600">Serviceable Available Market</h3>
+          <p class="text-xl font-bold text-blue-800" x-text="'$' + sam.toLocaleString()"></p>
+          <p class="text-sm text-gray-500">The portion of TAM targeted by your products and services</p>
+        </div>
+        <div class="bg-blue-50 p-4 rounded-xl">
+          <h3 class="text-sm text-gray-600">Serviceable Obtainable Market</h3>
+          <p class="text-xl font-bold text-blue-800" x-text="'$' + som.toLocaleString()"></p>
+          <p class="text-sm text-gray-500">The portion of SAM that you can realistically capture</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -95,17 +111,45 @@
           this.renderChart();
         },
 
+        setPreset(type) {
+          if (type === 'conservative') {
+            this.percentDigitized = 60;
+            this.smbPercent = 70;
+            this.midPercent = 30;
+            this.samCoverage = 10;
+            this.somConversion = 5;
+          } else if (type === 'moderate') {
+            this.percentDigitized = 50;
+            this.smbPercent = 80;
+            this.midPercent = 20;
+            this.samCoverage = 15;
+            this.somConversion = 10;
+          } else if (type === 'aggressive') {
+            this.percentDigitized = 40;
+            this.smbPercent = 60;
+            this.midPercent = 40;
+            this.samCoverage = 25;
+            this.somConversion = 20;
+          }
+          this.calculate();
+        },
+
         renderChart() {
           const chart = echarts.init(document.getElementById('chart'));
           chart.setOption({
             tooltip: { trigger: 'item' },
+            legend: {
+              bottom: 0,
+              data: ['TAM (remaining)', 'SAM (remaining)', 'SOM']
+            },
             series: [
               {
                 type: 'pie',
-                radius: '65%',
+                radius: ['50%', '70%'],
+                label: { show: false },
                 data: [
-                  { value: this.tam, name: 'TAM' },
-                  { value: this.sam, name: 'SAM' },
+                  { value: this.tam - this.sam, name: 'TAM (remaining)' },
+                  { value: this.sam - this.som, name: 'SAM (remaining)' },
                   { value: this.som, name: 'SOM' }
                 ]
               }
