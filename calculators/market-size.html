@@ -12,77 +12,96 @@
   <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow p-6" x-data="calculator()" x-init="init()">
     <h1 class="text-2xl font-bold mb-6">Market Opportunity Calculator</h1>
 
-    <!-- Grouped Input Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+      <div class="bg-gray-50 p-4 rounded-xl col-span-full">
+        <h2 class="font-semibold text-lg mb-2">Run Scenarios</h2>
+        <div class="flex flex-wrap gap-2">
+          <button @click="setPreset('conservative')" class="text-sm text-blue-600 bg-blue-100 font-medium px-3 py-1 rounded">Conservative</button>
+          <button @click="setPreset('moderate')" class="text-sm text-blue-600 bg-blue-100 font-medium px-3 py-1 rounded">Moderate</button>
+          <button @click="setPreset('aggressive')" class="text-sm text-blue-600 bg-blue-100 font-medium px-3 py-1 rounded">Aggressive</button>
+        </div>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <!-- Market Size Inputs -->
       <div class="bg-gray-50 p-4 rounded-xl space-y-4">
         <h2 class="font-semibold text-lg">Market Size</h2>
         <div>
           <label class="block font-medium">Total Companies</label>
-          <input type="number" x-model.number="totalCompanies" @input="debouncedCalculate" class="w-full mt-1 p-2 border rounded" />
+          <p class="text-xs text-gray-500 mt-1">Total number of potential companies in your target market.</p>
+          <input type="number" x-model.number="totalCompanies" @input="debouncedCalculate" placeholder="e.g. 260000" class="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
           <label class="block font-medium">% Digitized</label>
+          <p class="text-xs text-gray-500 mt-1">Estimated percent of companies that are already digitized.</p>
           <input type="range" min="0" max="100" x-model.number="percentDigitized" @input="debouncedCalculate" class="w-full" />
           <div class="text-right text-sm text-gray-600">x<span x-text="percentDigitized"></span>%</div>
         </div>
       </div>
 
+      <!-- ACV Inputs -->
       <div class="bg-gray-50 p-4 rounded-xl space-y-4">
         <h2 class="font-semibold text-lg">ACV Estimates</h2>
         <div>
           <label class="block font-medium">SMB ACV ($)</label>
-          <input type="number" x-model.number="acvSMB" @input="debouncedCalculate" class="w-full mt-1 p-2 border rounded" />
+          <p class="text-xs text-gray-500 mt-1">Average contract value for SMB customers.</p>
+          <input type="number" x-model.number="acvSMB" @input="debouncedCalculate" placeholder="e.g. 300" class="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
           <label class="block font-medium">Mid-Market ACV ($)</label>
-          <input type="number" x-model.number="acvMid" @input="debouncedCalculate" class="w-full mt-1 p-2 border rounded" />
+          <p class="text-xs text-gray-500 mt-1">Typical deal size for mid-market customers.</p>
+          <input type="number" x-model.number="acvMid" @input="debouncedCalculate" placeholder="e.g. 2300" class="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
           <label class="block font-medium">Enterprise ACV ($)</label>
-          <input type="number" x-model.number="acvEnterprise" @input="debouncedCalculate" class="w-full mt-1 p-2 border rounded" />
+          <p class="text-xs text-gray-500 mt-1">Estimated average value per enterprise deal.</p>
+          <input type="number" x-model.number="acvEnterprise" @input="debouncedCalculate" placeholder="e.g. 8000" class="w-full mt-1 p-2 border rounded" />
         </div>
       </div>
 
+      <!-- Market Segmentation -->
       <div class="bg-gray-50 p-4 rounded-xl space-y-4">
         <h2 class="font-semibold text-lg">Targeting</h2>
         <div>
           <label class="block font-medium">SMB %</label>
+          <p class="text-xs text-gray-500 mt-1">Proportion of digitized market you estimate is SMB.</p>
           <input type="range" min="0" max="100" x-model.number="smbPercent" @input="adjustMarketSplit('smb')" class="w-full" />
           <div class="text-right text-sm text-gray-600">x<span x-text="smbPercent"></span>%</div>
         </div>
         <div>
           <label class="block font-medium">Mid-Market %</label>
+          <p class="text-xs text-gray-500 mt-1">Proportion of digitized market that is mid-sized businesses.</p>
           <input type="range" min="0" max="100" x-model.number="midPercent" @input="adjustMarketSplit('mid')" class="w-full" />
           <div class="text-right text-sm text-gray-600">x<span x-text="midPercent"></span>%</div>
         </div>
         <div>
           <label class="block font-medium">Enterprise %</label>
-          <input type="range" min="0" max="100" x-model.number="enterprisePercent" @input="debouncedCalculate" class="w-full" />
+          <p class="text-xs text-gray-500 mt-1">Remaining segment attributed to enterprise companies.</p>
+          <input type="range" min="0" max="100" x-model.number="enterprisePercent" @input="adjustMarketSplit('enterprise')" class="w-full" />
           <div class="text-right text-sm text-gray-600">x<span x-text="enterprisePercent"></span>%</div>
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+    <!-- SAM/SOM Inputs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       <div>
         <label class="block font-medium">SAM Coverage %</label>
+        <p class="text-xs text-gray-500 mt-1">How much of the TAM your current offerings can serve.</p>
         <input type="range" min="0" max="100" x-model.number="samCoverage" @input="debouncedCalculate" class="w-full" />
         <div class="text-right text-sm text-gray-600">x<span x-text="samCoverage"></span>%</div>
       </div>
       <div>
         <label class="block font-medium">SOM Conversion %</label>
+        <p class="text-xs text-gray-500 mt-1">Portion of SAM you realistically expect to convert. Most SaaS companies see ~5–10% SOM. This is an industry approximation, not a rule.</p>
         <input type="range" min="0" max="100" x-model.number="somConversion" @input="debouncedCalculate" class="w-full" />
         <div class="text-right text-sm text-gray-600">x<span x-text="somConversion"></span>%</div>
       </div>
-      <div class="flex items-end justify-start space-x-4">
-        <button @click="setPreset('conservative')" class="text-sm text-blue-600 underline">Conservative</button>
-        <button @click="setPreset('moderate')" class="text-sm text-blue-600 underline">Moderate</button>
-        <button @click="setPreset('aggressive')" class="text-sm text-blue-600 underline">Aggressive</button>
-        <button @click="calculate" class="text-sm text-blue-800 font-semibold bg-blue-100 px-3 py-1 rounded">Calculate</button>
-      </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+    <!-- Output -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="col-span-1 lg:col-span-2 bg-gray-50 rounded-xl p-4">
         <div id="chart" style="height: 300px;"></div>
       </div>
@@ -125,21 +144,27 @@
         sam: 0,
         som: 0,
 
-        init() {
-          this.calculate();
-        },
+        init() { this.calculate(); },
 
         adjustMarketSplit(changed) {
-          if (changed === 'smb') {
-            const remaining = 100 - this.smbPercent;
-            const midRatio = this.midPercent / (this.midPercent + this.enterprisePercent || 1);
-            this.midPercent = Math.round(remaining * midRatio);
-            this.enterprisePercent = 100 - this.smbPercent - this.midPercent;
-          } else if (changed === 'mid') {
-            const remaining = 100 - this.midPercent;
-            const smbRatio = this.smbPercent / (this.smbPercent + this.enterprisePercent || 1);
-            this.smbPercent = Math.round(remaining * smbRatio);
-            this.enterprisePercent = 100 - this.smbPercent - this.midPercent;
+          const total = this.smbPercent + this.midPercent + this.enterprisePercent;
+          if (total !== 100) {
+            if (changed === 'smb') {
+              const remaining = 100 - this.smbPercent;
+              const ratio = this.midPercent / (this.midPercent + this.enterprisePercent || 1);
+              this.midPercent = Math.round(remaining * ratio);
+              this.enterprisePercent = 100 - this.smbPercent - this.midPercent;
+            } else if (changed === 'mid') {
+              const remaining = 100 - this.midPercent;
+              const ratio = this.smbPercent / (this.smbPercent + this.enterprisePercent || 1);
+              this.smbPercent = Math.round(remaining * ratio);
+              this.enterprisePercent = 100 - this.smbPercent - this.midPercent;
+            } else if (changed === 'enterprise') {
+              const remaining = 100 - this.enterprisePercent;
+              const ratio = this.smbPercent / (this.smbPercent + this.midPercent || 1);
+              this.smbPercent = Math.round(remaining * ratio);
+              this.midPercent = 100 - this.smbPercent - this.enterprisePercent;
+            }
           }
           this.debouncedCalculate();
         },
