@@ -12,6 +12,7 @@
   <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow p-6" x-data="calculator()" x-init="init()">
     <h1 class="text-2xl font-bold mb-6">Market Opportunity Calculator</h1>
 
+    <!-- Run Scenarios -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
       <div class="bg-gray-50 p-4 rounded-xl col-span-full">
         <h2 class="font-semibold text-lg mb-2">Run Scenarios</h2>
@@ -23,8 +24,8 @@
       </div>
     </div>
 
+    <!-- Input Sections Restored -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-      <!-- Market Size Inputs -->
       <div class="bg-gray-50 p-4 rounded-xl space-y-4">
         <h2 class="font-semibold text-lg">Market Size</h2>
         <div>
@@ -40,7 +41,6 @@
         </div>
       </div>
 
-      <!-- ACV Inputs -->
       <div class="bg-gray-50 p-4 rounded-xl space-y-4">
         <h2 class="font-semibold text-lg">ACV Estimates</h2>
         <div>
@@ -60,7 +60,6 @@
         </div>
       </div>
 
-      <!-- Market Segmentation -->
       <div class="bg-gray-50 p-4 rounded-xl space-y-4">
         <h2 class="font-semibold text-lg">Targeting</h2>
         <div>
@@ -84,7 +83,6 @@
       </div>
     </div>
 
-    <!-- SAM/SOM Inputs -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       <div>
         <label class="block font-medium">SAM Coverage %</label>
@@ -100,7 +98,7 @@
       </div>
     </div>
 
-    <!-- Output -->
+    <!-- Output with additional breakdown -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="col-span-1 lg:col-span-2 bg-gray-50 rounded-xl p-4">
         <div id="chart" style="height: 300px;"></div>
@@ -120,6 +118,25 @@
           <h3 class="text-sm text-gray-600">Serviceable Obtainable Market</h3>
           <p class="text-xl font-bold text-blue-800" x-text="'$' + som.toLocaleString()"></p>
           <p class="text-sm text-gray-500">The portion of SAM that you can realistically capture</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown of required companies by segment -->
+    <div class="mt-6 bg-gray-50 p-4 rounded-xl">
+      <h2 class="text-lg font-semibold mb-4 text-center">Estimated Companies to Acquire (by Segment)</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+        <div class="bg-white p-4 rounded-xl shadow">
+          <h4 class="text-sm text-gray-600">SMB Companies</h4>
+          <p class="text-xl font-bold text-blue-800" x-text="smbCompaniesToAcquire.toLocaleString()"></p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow">
+          <h4 class="text-sm text-gray-600">Mid-Market Companies</h4>
+          <p class="text-xl font-bold text-blue-800" x-text="midCompaniesToAcquire.toLocaleString()"></p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow">
+          <h4 class="text-sm text-gray-600">Enterprise Companies</h4>
+          <p class="text-xl font-bold text-blue-800" x-text="enterpriseCompaniesToAcquire.toLocaleString()"></p>
         </div>
       </div>
     </div>
@@ -143,6 +160,10 @@
         tam: 0,
         sam: 0,
         som: 0,
+
+        smbCompaniesToAcquire: 0,
+        midCompaniesToAcquire: 0,
+        enterpriseCompaniesToAcquire: 0,
 
         init() { this.calculate(); },
 
@@ -183,6 +204,12 @@
           this.tam = smbCount * this.acvSMB + midCount * this.acvMid + enterpriseCount * this.acvEnterprise;
           this.sam = this.tam * (this.samCoverage / 100);
           this.som = this.sam * (this.somConversion / 100);
+
+          // Company breakdown for SOM
+          const totalSomCompanies = this.som / ((this.acvSMB * this.smbPercent / 100) + (this.acvMid * this.midPercent / 100) + (this.acvEnterprise * this.enterprisePercent / 100));
+          this.smbCompaniesToAcquire = Math.round(totalSomCompanies * (this.smbPercent / 100));
+          this.midCompaniesToAcquire = Math.round(totalSomCompanies * (this.midPercent / 100));
+          this.enterpriseCompaniesToAcquire = Math.round(totalSomCompanies * (this.enterprisePercent / 100));
 
           this.renderChart();
         },
