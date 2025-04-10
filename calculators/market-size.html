@@ -3,61 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Karthikeyan - TAM/SAM/SOM Calculator</title>
+  <title>Market Opportunity Calculator (TAM/SAM/SOM)</title>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 p-4" x-data="calculator()">
-  <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow p-6">
-    <h1 class="text-2xl font-bold mb-4">TAM/SAM/SOM Calculator</h1>
+<body class="bg-gray-100 p-4">
+  <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow p-6" x-data="calculator()" x-init="init()">
+    <h1 class="text-2xl font-bold mb-6">Market Opportunity Calculator</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="col-span-1">
-        <label class="block font-medium">Total Companies</label>
-        <input type="number" x-model.number="totalCompanies" class="w-full mt-1 p-2 border rounded" />
+    <!-- Grouped Input Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <div class="bg-gray-50 p-4 rounded-xl space-y-4">
+        <h2 class="font-semibold text-lg">Market Size</h2>
+        <div>
+          <label class="block font-medium">Total Companies</label>
+          <input type="number" x-model.number="totalCompanies" @input="debouncedCalculate" class="w-full mt-1 p-2 border rounded" />
+        </div>
+        <div>
+          <label class="block font-medium">% Digitized</label>
+          <input type="range" min="0" max="100" x-model.number="percentDigitized" @input="debouncedCalculate" class="w-full" />
+          <div class="text-right text-sm text-gray-600">x<span x-text="percentDigitized"></span>%</div>
+        </div>
       </div>
-      <div class="col-span-2 flex justify-start space-x-4">
+
+      <div class="bg-gray-50 p-4 rounded-xl space-y-4">
+        <h2 class="font-semibold text-lg">ACV Estimates</h2>
+        <div>
+          <label class="block font-medium">SMB ACV ($)</label>
+          <input type="number" x-model.number="acvSMB" @input="debouncedCalculate" class="w-full mt-1 p-2 border rounded" />
+        </div>
+        <div>
+          <label class="block font-medium">Mid-Market ACV ($)</label>
+          <input type="number" x-model.number="acvMid" @input="debouncedCalculate" class="w-full mt-1 p-2 border rounded" />
+        </div>
+        <div>
+          <label class="block font-medium">Enterprise ACV ($)</label>
+          <input type="number" x-model.number="acvEnterprise" @input="debouncedCalculate" class="w-full mt-1 p-2 border rounded" />
+        </div>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-xl space-y-4">
+        <h2 class="font-semibold text-lg">Targeting</h2>
+        <div>
+          <label class="block font-medium">SMB %</label>
+          <input type="range" min="0" max="100" x-model.number="smbPercent" @input="adjustMarketSplit('smb')" class="w-full" />
+          <div class="text-right text-sm text-gray-600">x<span x-text="smbPercent"></span>%</div>
+        </div>
+        <div>
+          <label class="block font-medium">Mid-Market %</label>
+          <input type="range" min="0" max="100" x-model.number="midPercent" @input="adjustMarketSplit('mid')" class="w-full" />
+          <div class="text-right text-sm text-gray-600">x<span x-text="midPercent"></span>%</div>
+        </div>
+        <div>
+          <label class="block font-medium">Enterprise %</label>
+          <input type="range" min="0" max="100" x-model.number="enterprisePercent" @input="debouncedCalculate" class="w-full" />
+          <div class="text-right text-sm text-gray-600">x<span x-text="enterprisePercent"></span>%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+      <div>
+        <label class="block font-medium">SAM Coverage %</label>
+        <input type="range" min="0" max="100" x-model.number="samCoverage" @input="debouncedCalculate" class="w-full" />
+        <div class="text-right text-sm text-gray-600">x<span x-text="samCoverage"></span>%</div>
+      </div>
+      <div>
+        <label class="block font-medium">SOM Conversion %</label>
+        <input type="range" min="0" max="100" x-model.number="somConversion" @input="debouncedCalculate" class="w-full" />
+        <div class="text-right text-sm text-gray-600">x<span x-text="somConversion"></span>%</div>
+      </div>
+      <div class="flex items-end justify-start space-x-4">
         <button @click="setPreset('conservative')" class="text-sm text-blue-600 underline">Conservative</button>
         <button @click="setPreset('moderate')" class="text-sm text-blue-600 underline">Moderate</button>
         <button @click="setPreset('aggressive')" class="text-sm text-blue-600 underline">Aggressive</button>
+        <button @click="calculate" class="text-sm text-blue-800 font-semibold bg-blue-100 px-3 py-1 rounded">Calculate</button>
       </div>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-      <div>
-        <label class="block font-medium">% Digitized: <span x-text="percentDigitized + '%'" class="ml-1"></span></label>
-        <input type="range" min="0" max="100" x-model.number="percentDigitized" class="w-full" />
-      </div>
-      <div>
-        <label class="block font-medium">SMB ACV ($)</label>
-        <input type="number" x-model.number="acvSMB" class="w-full p-2 border rounded" />
-      </div>
-      <div>
-        <label class="block font-medium">Mid-Market ACV ($)</label>
-        <input type="number" x-model.number="acvMid" class="w-full p-2 border rounded" />
-      </div>
-
-      <div>
-        <label class="block font-medium">SMB % of Market: <span x-text="smbPercent + '%'" class="ml-1"></span></label>
-        <input type="range" min="0" max="100" x-model.number="smbPercent" class="w-full" />
-      </div>
-      <div>
-        <label class="block font-medium">Mid-Market % of Market: <span x-text="midPercent + '%'" class="ml-1"></span></label>
-        <input type="range" min="0" max="100" x-model.number="midPercent" class="w-full" />
-      </div>
-
-      <div>
-        <label class="block font-medium">SAM Coverage %: <span x-text="samCoverage + '%'" class="ml-1"></span></label>
-        <input type="range" min="0" max="100" x-model.number="samCoverage" class="w-full" />
-      </div>
-      <div>
-        <label class="block font-medium">SOM Conversion %: <span x-text="somConversion + '%'" class="ml-1"></span></label>
-        <input type="range" min="0" max="100" x-model.number="somConversion" class="w-full" />
-      </div>
-    </div>
-
-    <button @click="calculate" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded">Calculate</button>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
       <div class="col-span-1 lg:col-span-2 bg-gray-50 rounded-xl p-4">
@@ -85,13 +108,16 @@
 
   <script>
     function calculator() {
+      let timeout;
       return {
         totalCompanies: 260000,
         percentDigitized: 50,
         acvSMB: 300,
         acvMid: 2300,
-        smbPercent: 80,
-        midPercent: 20,
+        acvEnterprise: 8000,
+        smbPercent: 60,
+        midPercent: 30,
+        enterprisePercent: 10,
         samCoverage: 15,
         somConversion: 10,
 
@@ -99,12 +125,37 @@
         sam: 0,
         som: 0,
 
-        calculate() {
-          const notDigitized = this.totalCompanies * (1 - this.percentDigitized / 100);
-          const smbCount = notDigitized * (this.smbPercent / 100);
-          const midCount = notDigitized * (this.midPercent / 100);
+        init() {
+          this.calculate();
+        },
 
-          this.tam = smbCount * this.acvSMB + midCount * this.acvMid;
+        adjustMarketSplit(changed) {
+          if (changed === 'smb') {
+            const remaining = 100 - this.smbPercent;
+            const midRatio = this.midPercent / (this.midPercent + this.enterprisePercent || 1);
+            this.midPercent = Math.round(remaining * midRatio);
+            this.enterprisePercent = 100 - this.smbPercent - this.midPercent;
+          } else if (changed === 'mid') {
+            const remaining = 100 - this.midPercent;
+            const smbRatio = this.smbPercent / (this.smbPercent + this.enterprisePercent || 1);
+            this.smbPercent = Math.round(remaining * smbRatio);
+            this.enterprisePercent = 100 - this.smbPercent - this.midPercent;
+          }
+          this.debouncedCalculate();
+        },
+
+        debouncedCalculate() {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => this.calculate(), 200);
+        },
+
+        calculate() {
+          const digitizedCompanies = this.totalCompanies * (this.percentDigitized / 100);
+          const smbCount = digitizedCompanies * (this.smbPercent / 100);
+          const midCount = digitizedCompanies * (this.midPercent / 100);
+          const enterpriseCount = digitizedCompanies * (this.enterprisePercent / 100);
+
+          this.tam = smbCount * this.acvSMB + midCount * this.acvMid + enterpriseCount * this.acvEnterprise;
           this.sam = this.tam * (this.samCoverage / 100);
           this.som = this.sam * (this.somConversion / 100);
 
@@ -112,25 +163,13 @@
         },
 
         setPreset(type) {
-          if (type === 'conservative') {
-            this.percentDigitized = 60;
-            this.smbPercent = 70;
-            this.midPercent = 30;
-            this.samCoverage = 10;
-            this.somConversion = 5;
-          } else if (type === 'moderate') {
-            this.percentDigitized = 50;
-            this.smbPercent = 80;
-            this.midPercent = 20;
-            this.samCoverage = 15;
-            this.somConversion = 10;
-          } else if (type === 'aggressive') {
-            this.percentDigitized = 40;
-            this.smbPercent = 60;
-            this.midPercent = 40;
-            this.samCoverage = 25;
-            this.somConversion = 20;
-          }
+          const presets = {
+            conservative: { percentDigitized: 60, smbPercent: 60, midPercent: 30, samCoverage: 10, somConversion: 5 },
+            moderate: { percentDigitized: 50, smbPercent: 60, midPercent: 30, samCoverage: 15, somConversion: 10 },
+            aggressive: { percentDigitized: 40, smbPercent: 50, midPercent: 30, samCoverage: 25, somConversion: 20 }
+          };
+          Object.assign(this, presets[type]);
+          this.enterprisePercent = 100 - this.smbPercent - this.midPercent;
           this.calculate();
         },
 
@@ -138,25 +177,20 @@
           const chart = echarts.init(document.getElementById('chart'));
           chart.setOption({
             tooltip: { trigger: 'item' },
-            legend: {
-              bottom: 0,
-              data: ['TAM (remaining)', 'SAM (remaining)', 'SOM']
-            },
-            series: [
-              {
-                type: 'pie',
-                radius: ['50%', '70%'],
-                label: { show: false },
-                data: [
-                  { value: this.tam - this.sam, name: 'TAM (remaining)' },
-                  { value: this.sam - this.som, name: 'SAM (remaining)' },
-                  { value: this.som, name: 'SOM' }
-                ]
-              }
-            ]
+            legend: { bottom: 0, data: ['TAM (remaining)', 'SAM (remaining)', 'SOM'] },
+            series: [{
+              type: 'pie',
+              radius: ['50%', '70%'],
+              label: { show: false },
+              data: [
+                { value: this.tam - this.sam, name: 'TAM (remaining)' },
+                { value: this.sam - this.som, name: 'SAM (remaining)' },
+                { value: this.som, name: 'SOM' }
+              ]
+            }]
           });
         }
-      }
+      };
     }
   </script>
 </body>
