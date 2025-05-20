@@ -31,12 +31,12 @@
         <div>
           <label class="block font-medium">Total Companies</label>
           <p class="text-xs text-gray-500 mt-1">Total number of potential companies in your target market.</p>
-          <input type="number" x-model.number="totalCompanies" @input="debouncedCalculate" placeholder="e.g. 260000" class="w-full mt-1 p-2 border rounded" />
+          <input type="number" x-model.number="totalCompanies" @input="debouncedCalculate()" placeholder="e.g. 260000" class="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
           <label class="block font-medium">% Digitized</label>
           <p class="text-xs text-gray-500 mt-1">Estimated percent of companies that are already digitized.</p>
-          <input type="range" min="0" max="100" x-model.number="percentDigitized" @input="debouncedCalculate" class="w-full" />
+          <input type="range" min="0" max="100" x-model.number="percentDigitized" @input="debouncedCalculate()" class="w-full" />
           <div class="text-right text-sm text-gray-600">x<span x-text="percentDigitized"></span>%</div>
         </div>
       </div>
@@ -46,17 +46,17 @@
         <div>
           <label class="block font-medium">SMB ACV ($)</label>
           <p class="text-xs text-gray-500 mt-1">Average contract value for SMB customers.</p>
-          <input type="number" x-model.number="acvSMB" @input="debouncedCalculate" placeholder="e.g. 300" class="w-full mt-1 p-2 border rounded" />
+          <input type="number" x-model.number="acvSMB" @input="debouncedCalculate()" placeholder="e.g. 300" class="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
           <label class="block font-medium">Mid-Market ACV ($)</label>
           <p class="text-xs text-gray-500 mt-1">Typical deal size for mid-market customers.</p>
-          <input type="number" x-model.number="acvMid" @input="debouncedCalculate" placeholder="e.g. 2300" class="w-full mt-1 p-2 border rounded" />
+          <input type="number" x-model.number="acvMid" @input="debouncedCalculate()" placeholder="e.g. 2300" class="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
           <label class="block font-medium">Enterprise ACV ($)</label>
           <p class="text-xs text-gray-500 mt-1">Estimated average value per enterprise deal.</p>
-          <input type="number" x-model.number="acvEnterprise" @input="debouncedCalculate" placeholder="e.g. 8000" class="w-full mt-1 p-2 border rounded" />
+          <input type="number" x-model.number="acvEnterprise" @input="debouncedCalculate()" placeholder="e.g. 8000" class="w-full mt-1 p-2 border rounded" />
         </div>
       </div>
 
@@ -87,13 +87,13 @@
       <div>
         <label class="block font-medium">SAM Coverage %</label>
         <p class="text-xs text-gray-500 mt-1">How much of the TAM your current offerings can serve.</p>
-        <input type="range" min="0" max="100" x-model.number="samCoverage" @input="debouncedCalculate" class="w-full" />
+        <input type="range" min="0" max="100" x-model.number="samCoverage" @input="debouncedCalculate()" class="w-full" />
         <div class="text-right text-sm text-gray-600">x<span x-text="samCoverage"></span>%</div>
       </div>
       <div>
         <label class="block font-medium">SOM Conversion %</label>
         <p class="text-xs text-gray-500 mt-1">Portion of SAM you realistically expect to convert. Most SaaS companies see ~5–10% SOM. This is an industry approximation, not a rule.</p>
-        <input type="range" min="0" max="100" x-model.number="somConversion" @input="debouncedCalculate" class="w-full" />
+        <input type="range" min="0" max="100" x-model.number="somConversion" @input="debouncedCalculate()" class="w-full" />
         <div class="text-right text-sm text-gray-600">x<span x-text="somConversion"></span>%</div>
       </div>
     </div>
