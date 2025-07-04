@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Quadrant Visualizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -40,11 +41,18 @@
         .item-name {
             font-weight: 500;
             color: white;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .item-name[contenteditable="true"]:focus {
+            background-color: rgba(255,255,255,0.2);
+            outline: none;
         }
         .sub-tags-container {
             display: flex;
             flex-wrap: wrap;
             margin-top: 6px;
+            cursor: text;
         }
         .sub-tag {
             background-color: #4a5568;
@@ -55,26 +63,34 @@
             margin-right: 4px;
             margin-bottom: 4px;
         }
-        .delete-btn {
+        .item-controls {
             display: none;
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -10px;
+            right: -10px;
             background-color: white;
-            color: #ef4444; /* red-500 */
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            text-align: center;
-            line-height: 18px;
-            font-weight: bold;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .item-tag:hover .item-controls {
+            display: flex;
+        }
+        .control-btn {
+            background: none;
+            border: none;
             cursor: pointer;
-            border: 1px solid #fca5a5; /* red-300 */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            font-weight: bold;
+            color: #4a5568;
         }
-        .item-tag:hover .delete-btn {
-            display: block;
+        .control-btn:hover {
+            color: #1a202c;
         }
+        .delete-btn { color: #ef4444; }
         .add-item-btn {
             position: absolute;
             top: 8px;
@@ -124,6 +140,7 @@
         .axis-y {
             writing-mode: vertical-rl;
             transform: rotate(180deg);
+            white-space: nowrap; /* Helps with rendering */
         }
         .editable {
             padding: 4px 8px;
@@ -145,9 +162,13 @@
 
     <div class="container mx-auto p-4 md:p-8">
         <h1 class="text-3xl font-bold mb-2 text-center text-gray-700">Interactive Quadrant Visualizer</h1>
-        <p class="text-center text-gray-500 mb-8">Categorize items by dragging them into the quadrants. Your work is saved automatically.</p>
+        <p class="text-center text-gray-500 mb-4">Categorize items by dragging them into the quadrants. Your work is saved automatically.</p>
+        <div class="flex justify-center gap-4 mb-8">
+            <button onclick="exportPNG()" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">Export as PNG</button>
+            <button onclick="exportJSON()" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">Export as JSON</button>
+        </div>
 
-        <div class="flex items-center justify-center">
+        <div id="quadrant-container" class="flex items-center justify-center">
              <div class="axis-label axis-y p-4">
                 <span id="axis-y-label" contenteditable="true" class="editable"><-- Lower Value | Higher Value --></span>
             </div>
@@ -172,7 +193,7 @@
                         <h3 contenteditable="true" class="editable font-bold text-lg text-yellow-700">Q4: Fill-ins</h3>
                         <p id="q4-desc" class="text-sm text-gray-600 mb-4">Low Effort, Low Value</p>
                     </div>
-                    <div id="q2" class="quadrant bg-red-50 p-4 border-dashed border-red-400" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                    <div id="q2" class="quadrant bg-white p-4" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
                         <button class="add-item-btn" onclick="showAddItemInput('q2')">+</button>
                         <h3 contenteditable="true" class="editable font-bold text-lg text-red-700">Q2: Thankless Tasks</h3>
                         <p id="q2-desc" class="text-sm text-gray-600 mb-4">High Effort, Low Value</p>
@@ -184,11 +205,11 @@
 
     <script>
         let itemCounter = 0;
-        const storageKey = 'quadrantVisualizerState_v2'; // New key for new data structure
+        const storageKey = 'quadrantVisualizerState_v3';
 
         // --- STATE MANAGEMENT ---
 
-        function saveState() {
+        function getState() {
             const state = {
                 labels: {
                     y: document.getElementById('axis-y-label').textContent,
@@ -196,26 +217,21 @@
                 },
                 quadrants: {}
             };
-
             document.querySelectorAll('.quadrant').forEach(quadrant => {
                 const quadrantId = quadrant.id;
                 if (!quadrantId) return;
-
                 const title = quadrant.querySelector('h3').textContent;
-                const items = [];
-                quadrant.querySelectorAll('.item-tag').forEach(tagElement => {
-                    const name = tagElement.querySelector('.item-name').textContent;
-                    const subTags = [];
-                    tagElement.querySelectorAll('.sub-tag').forEach(subTag => {
-                        subTags.push(subTag.textContent);
-                    });
-                    items.push({ name, tags: subTags });
-                });
-
+                const items = Array.from(quadrant.querySelectorAll('.item-tag')).map(tagEl => ({
+                    name: tagEl.querySelector('.item-name').textContent,
+                    tags: Array.from(tagEl.querySelectorAll('.sub-tag')).map(st => st.textContent)
+                }));
                 state.quadrants[quadrantId] = { title, items };
             });
+            return state;
+        }
 
-            localStorage.setItem(storageKey, JSON.stringify(state));
+        function saveState() {
+            localStorage.setItem(storageKey, JSON.stringify(getState()));
         }
 
         function loadState() {
@@ -224,137 +240,142 @@
                 const state = JSON.parse(savedState);
                 document.getElementById('axis-y-label').textContent = state.labels.y;
                 document.getElementById('axis-x-label').textContent = state.labels.x;
-
                 for (const quadrantId in state.quadrants) {
-                    const quadrantData = state.quadrants[quadrantId];
-                    const quadrantElement = document.getElementById(quadrantId);
-                    if (quadrantElement) {
-                        quadrantElement.querySelector('h3').textContent = quadrantData.title;
-                        quadrantData.items.forEach(item => createTag(quadrantId, item.name, item.tags, false));
+                    const qData = state.quadrants[quadrantId];
+                    const qEl = document.getElementById(quadrantId);
+                    if (qEl) {
+                        qEl.querySelector('h3').textContent = qData.title;
+                        qData.items.forEach(item => createTag(quadrantId, item.name, item.tags, false));
                     }
                 }
             } else {
                 createTag('q1', 'Develop new feature', ['frontend', 'backend'], false);
                 createTag('q3', 'Fix critical bug', ['p0', 'database'], false);
-                createTag('q3', 'Update documentation', ['docs'], false);
                 createTag('q4', 'Organize file directory', [], false);
                 createTag('q2', 'Refactor legacy module', ['tech-debt'], false);
             }
             updateQuadrantDescriptions();
         }
 
-        // --- DOM MANIPULATION ---
+        // --- DOM MANIPULATION & EVENTS ---
 
         function createTag(quadrantId, itemName, itemTags = [], shouldSave = true) {
             if (!itemName) return;
-
             const quadrant = document.getElementById(quadrantId);
-            const itemId = 'item-' + itemCounter++;
-            
+            const itemId = 'item-' + (itemCounter++);
             const itemElement = document.createElement('div');
             itemElement.id = itemId;
             itemElement.draggable = true;
             itemElement.className = 'item-tag';
-
             const subTagsHTML = itemTags.map(tag => `<span class="sub-tag">${tag}</span>`).join('');
 
             itemElement.innerHTML = `
-                <span class="item-name">${itemName}</span>
-                <div class="sub-tags-container">${subTagsHTML}</div>
-                <span class="delete-btn" onclick="deleteItem(event)">&times;</span>
+                <div class="item-controls">
+                    <button class="control-btn" title="Duplicate" onclick="duplicateItem(event)">&#128203;</button>
+                    <button class="control-btn delete-btn" title="Delete" onclick="deleteItem(event)">&times;</button>
+                </div>
+                <span class="item-name" contenteditable="true" onblur="saveState()" onkeydown="handleNameKeydown(event)">${itemName}</span>
+                <div class="sub-tags-container" onclick="editTags(event)">${subTagsHTML}</div>
             `;
             itemElement.addEventListener('dragstart', drag);
-            
             quadrant.appendChild(itemElement);
-
             if (shouldSave) saveState();
         }
 
         function showAddItemInput(quadrantId) {
             const existingInput = document.querySelector('.temp-input-container');
             if (existingInput) existingInput.remove();
-
             const quadrant = document.getElementById(quadrantId);
             const container = document.createElement('div');
             container.className = 'temp-input-container';
-
-            const nameInput = document.createElement('input');
-            nameInput.type = 'text';
-            nameInput.className = 'temp-input';
-            nameInput.placeholder = 'Item name...';
-
-            const tagsInput = document.createElement('input');
-            tagsInput.type = 'text';
-            tagsInput.className = 'temp-input';
-            tagsInput.placeholder = 'Tags (comma-separated)...';
-            
-            container.appendChild(nameInput);
-            container.appendChild(tagsInput);
-
+            container.innerHTML = `
+                <input type="text" class="temp-input" placeholder="Item name...">
+                <input type="text" class="temp-input" placeholder="Tags (comma-separated)...">
+            `;
+            const [nameInput, tagsInput] = container.querySelectorAll('input');
             const handleKeyDown = (event) => {
                 if (event.key === 'Enter') {
-                    const itemName = nameInput.value.trim();
                     const tags = tagsInput.value.trim().split(',').map(t => t.trim()).filter(t => t);
-                    createTag(quadrantId, itemName, tags);
+                    createTag(quadrantId, nameInput.value.trim(), tags);
                     container.remove();
                 } else if (event.key === 'Escape') {
                     container.remove();
                 }
             };
-
             nameInput.addEventListener('keydown', handleKeyDown);
             tagsInput.addEventListener('keydown', handleKeyDown);
             container.addEventListener('blur', (e) => {
-                if (!container.contains(e.relatedTarget)) {
-                    setTimeout(() => container.remove(), 100);
-                }
+                if (!container.contains(e.relatedTarget)) setTimeout(() => container.remove(), 100);
             }, true);
-            
             quadrant.appendChild(container);
             nameInput.focus();
         }
-        
+
         function deleteItem(event) {
             event.stopPropagation();
             event.target.closest('.item-tag').remove();
             saveState();
         }
         
+        function duplicateItem(event) {
+            event.stopPropagation();
+            const itemTag = event.target.closest('.item-tag');
+            const quadrantId = itemTag.parentElement.id;
+            const name = itemTag.querySelector('.item-name').textContent;
+            const tags = Array.from(itemTag.querySelectorAll('.sub-tag')).map(t => t.textContent);
+            createTag(quadrantId, name, tags);
+        }
+
+        function handleNameKeydown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                event.target.blur();
+            }
+        }
+
+        function editTags(event) {
+            const container = event.currentTarget;
+            if (container.querySelector('input')) return; // Already editing
+            const currentTags = Array.from(container.querySelectorAll('.sub-tag')).map(t => t.textContent);
+            container.innerHTML = '';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'temp-input';
+            input.value = currentTags.join(', ');
+            container.appendChild(input);
+            input.focus();
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter' || e.key === 'Escape') {
+                    e.preventDefault();
+                    input.blur();
+                }
+            };
+            input.onblur = () => {
+                const newTags = input.value.trim().split(',').map(t => t.trim()).filter(t => t);
+                const newTagsHTML = newTags.map(tag => `<span class="sub-tag">${tag}</span>`).join('');
+                container.innerHTML = newTagsHTML;
+                saveState();
+            };
+        }
+
         function updateQuadrantDescriptions() {
             const yAxisLabel = document.getElementById('axis-y-label').textContent;
             const xAxisLabel = document.getElementById('axis-x-label').textContent;
-
             const yParts = yAxisLabel.split('|').map(s => s.replace(/<-->/g, '').trim());
             const xParts = xAxisLabel.split('|').map(s => s.replace(/<-->/g, '').trim());
-
             const [yLow, yHigh] = yParts.length === 2 ? yParts : ['Y Low', 'Y High'];
             const [xLow, xHigh] = xParts.length === 2 ? xParts : ['X Low', 'X High'];
-
             document.getElementById('q1-desc').textContent = `${xHigh}, ${yHigh}`;
             document.getElementById('q2-desc').textContent = `${xHigh}, ${yLow}`;
             document.getElementById('q3-desc').textContent = `${xLow}, ${yHigh}`;
             document.getElementById('q4-desc').textContent = `${xLow}, ${yLow}`;
-            
             saveState();
         }
 
         // --- DRAG & DROP ---
-
-        function allowDrop(ev) {
-            ev.preventDefault();
-            const target = ev.target.closest('.quadrant');
-            if (target) target.classList.add('drag-over');
-        }
-        
-        function dragLeave(ev) {
-            const target = ev.target.closest('.quadrant');
-            if (target) target.classList.remove('drag-over');
-        }
-
-        function drag(ev) {
-            ev.dataTransfer.setData("text/plain", ev.target.id);
-        }
-
+        function allowDrop(ev) { ev.preventDefault(); const t = ev.target.closest('.quadrant'); if (t) t.classList.add('drag-over'); }
+        function dragLeave(ev) { const t = ev.target.closest('.quadrant'); if (t) t.classList.remove('drag-over'); }
+        function drag(ev) { ev.dataTransfer.setData("text/plain", ev.target.id); }
         function drop(ev) {
             ev.preventDefault();
             const dropTarget = ev.target.closest('.quadrant');
@@ -368,16 +389,50 @@
                 }
             }
         }
+
+        // --- EXPORT ---
+        function exportJSON() {
+            const state = getState();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "quadrant_data.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function exportPNG() {
+            const quadrantContainer = document.getElementById('quadrant-container');
+            // Temporarily remove controls for a cleaner image
+            const controls = quadrantContainer.querySelectorAll('.item-controls, .add-item-btn');
+            controls.forEach(c => c.style.display = 'none');
+            
+            html2canvas(quadrantContainer, {
+                backgroundColor: "#f7fafc", // bg-gray-100
+                scale: 2 // Higher resolution
+            }).then(canvas => {
+                const image = canvas.toDataURL("image/png", 1.0);
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", image);
+                downloadAnchorNode.setAttribute("download", "quadrant.png");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+                
+                // Restore controls
+                controls.forEach(c => c.style.display = '');
+            });
+        }
         
         // --- INITIALIZATION ---
-
         window.onload = () => {
             loadState();
             document.querySelectorAll('.editable').forEach(el => {
-                el.addEventListener('input', updateQuadrantDescriptions);
+                el.addEventListener('blur', updateQuadrantDescriptions);
+                el.addEventListener('keydown', e => { if(e.key === 'Enter') e.target.blur() });
             });
         };
-
     </script>
 </body>
 </html>
