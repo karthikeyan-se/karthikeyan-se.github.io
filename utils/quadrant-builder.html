@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quadrant Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quadrant {
+            min-height: 220px;
+            transition: background-color 0.3s ease;
+            position: relative;
+            padding-top: 40px; /* Make space for the add button */
+        }
+        .quadrant.drag-over {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-style: dashed;
+        }
+        .item-tag {
+            cursor: grab;
+            user-select: none;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            background-color: #2d3748; /* dark gray/blue */
+            padding: 8px 12px;
+            margin: 4px;
+            border-radius: 8px;
+        }
+        .item-tag:active {
+            cursor: grabbing;
+            background-color: #1a202c;
+        }
+        .item-name {
+            font-weight: 500;
+            color: white;
+        }
+        .sub-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .sub-tag {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            padding: 2px 6px;
+            font-size: 12px;
+            border-radius: 12px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+        .delete-btn {
+            display: none;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: white;
+            color: #ef4444; /* red-500 */
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #fca5a5; /* red-300 */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .item-tag:hover .delete-btn {
+            display: block;
+        }
+        .add-item-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border-radius: 50%;
+            border: none;
+            font-size: 20px;
+            line-height: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .add-item-btn:hover {
+            background-color: #cbd5e0;
+            transform: scale(1.1);
+        }
+        .temp-input-container {
+            background-color: white;
+            border: 2px solid #4299e1;
+            border-radius: 8px;
+            padding: 8px;
+            margin: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .temp-input {
+            width: 100%;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-bottom: 6px;
+        }
+        .temp-input:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+        .axis-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .axis-y {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+        .editable {
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease-in-out;
+        }
+        .editable:hover {
+            background-color: #edf2f7;
+            outline: 1px dashed #a0aec0;
+        }
+        .editable:focus {
+            outline: 2px solid #4299e1;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <h1 class="text-3xl font-bold mb-2 text-center text-gray-700">Interactive Quadrant Visualizer</h1>
+        <p class="text-center text-gray-500 mb-8">Categorize items by dragging them into the quadrants. Your work is saved automatically.</p>
+
+        <div class="flex items-center justify-center">
+             <div class="axis-label axis-y p-4">
+                <span id="axis-y-label" contenteditable="true" class="editable"><-- Lower Value | Higher Value --></span>
+            </div>
+            <div class="flex-grow">
+                <div class="axis-label p-4">
+                     <span id="axis-x-label" contenteditable="true" class="editable"><-- Lower Effort | Higher Effort --></span>
+                </div>
+                <!-- Main Quadrant Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-300 border border-gray-300 rounded-lg overflow-hidden shadow-md">
+                    <div id="q3" class="quadrant bg-white p-4" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                        <button class="add-item-btn" onclick="showAddItemInput('q3')">+</button>
+                        <h3 contenteditable="true" class="editable font-bold text-lg text-green-700">Q3: Quick Wins</h3>
+                        <p id="q3-desc" class="text-sm text-gray-600 mb-4">Low Effort, High Value</p>
+                    </div>
+                    <div id="q1" class="quadrant bg-white p-4" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                        <button class="add-item-btn" onclick="showAddItemInput('q1')">+</button>
+                        <h3 contenteditable="true" class="editable font-bold text-lg text-blue-700">Q1: Major Projects</h3>
+                        <p id="q1-desc" class="text-sm text-gray-600 mb-4">High Effort, High Value</p>
+                    </div>
+                    <div id="q4" class="quadrant bg-white p-4" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                        <button class="add-item-btn" onclick="showAddItemInput('q4')">+</button>
+                        <h3 contenteditable="true" class="editable font-bold text-lg text-yellow-700">Q4: Fill-ins</h3>
+                        <p id="q4-desc" class="text-sm text-gray-600 mb-4">Low Effort, Low Value</p>
+                    </div>
+                    <div id="q2" class="quadrant bg-red-50 p-4 border-dashed border-red-400" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                        <button class="add-item-btn" onclick="showAddItemInput('q2')">+</button>
+                        <h3 contenteditable="true" class="editable font-bold text-lg text-red-700">Q2: Thankless Tasks</h3>
+                        <p id="q2-desc" class="text-sm text-gray-600 mb-4">High Effort, Low Value</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let itemCounter = 0;
+        const storageKey = 'quadrantVisualizerState_v2'; // New key for new data structure
+
+        // --- STATE MANAGEMENT ---
+
+        function saveState() {
+            const state = {
+                labels: {
+                    y: document.getElementById('axis-y-label').textContent,
+                    x: document.getElementById('axis-x-label').textContent,
+                },
+                quadrants: {}
+            };
+
+            document.querySelectorAll('.quadrant').forEach(quadrant => {
+                const quadrantId = quadrant.id;
+                if (!quadrantId) return;
+
+                const title = quadrant.querySelector('h3').textContent;
+                const items = [];
+                quadrant.querySelectorAll('.item-tag').forEach(tagElement => {
+                    const name = tagElement.querySelector('.item-name').textContent;
+                    const subTags = [];
+                    tagElement.querySelectorAll('.sub-tag').forEach(subTag => {
+                        subTags.push(subTag.textContent);
+                    });
+                    items.push({ name, tags: subTags });
+                });
+
+                state.quadrants[quadrantId] = { title, items };
+            });
+
+            localStorage.setItem(storageKey, JSON.stringify(state));
+        }
+
+        function loadState() {
+            const savedState = localStorage.getItem(storageKey);
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                document.getElementById('axis-y-label').textContent = state.labels.y;
+                document.getElementById('axis-x-label').textContent = state.labels.x;
+
+                for (const quadrantId in state.quadrants) {
+                    const quadrantData = state.quadrants[quadrantId];
+                    const quadrantElement = document.getElementById(quadrantId);
+                    if (quadrantElement) {
+                        quadrantElement.querySelector('h3').textContent = quadrantData.title;
+                        quadrantData.items.forEach(item => createTag(quadrantId, item.name, item.tags, false));
+                    }
+                }
+            } else {
+                createTag('q1', 'Develop new feature', ['frontend', 'backend'], false);
+                createTag('q3', 'Fix critical bug', ['p0', 'database'], false);
+                createTag('q3', 'Update documentation', ['docs'], false);
+                createTag('q4', 'Organize file directory', [], false);
+                createTag('q2', 'Refactor legacy module', ['tech-debt'], false);
+            }
+            updateQuadrantDescriptions();
+        }
+
+        // --- DOM MANIPULATION ---
+
+        function createTag(quadrantId, itemName, itemTags = [], shouldSave = true) {
+            if (!itemName) return;
+
+            const quadrant = document.getElementById(quadrantId);
+            const itemId = 'item-' + itemCounter++;
+            
+            const itemElement = document.createElement('div');
+            itemElement.id = itemId;
+            itemElement.draggable = true;
+            itemElement.className = 'item-tag';
+
+            const subTagsHTML = itemTags.map(tag => `<span class="sub-tag">${tag}</span>`).join('');
+
+            itemElement.innerHTML = `
+                <span class="item-name">${itemName}</span>
+                <div class="sub-tags-container">${subTagsHTML}</div>
+                <span class="delete-btn" onclick="deleteItem(event)">&times;</span>
+            `;
+            itemElement.addEventListener('dragstart', drag);
+            
+            quadrant.appendChild(itemElement);
+
+            if (shouldSave) saveState();
+        }
+
+        function showAddItemInput(quadrantId) {
+            const existingInput = document.querySelector('.temp-input-container');
+            if (existingInput) existingInput.remove();
+
+            const quadrant = document.getElementById(quadrantId);
+            const container = document.createElement('div');
+            container.className = 'temp-input-container';
+
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'temp-input';
+            nameInput.placeholder = 'Item name...';
+
+            const tagsInput = document.createElement('input');
+            tagsInput.type = 'text';
+            tagsInput.className = 'temp-input';
+            tagsInput.placeholder = 'Tags (comma-separated)...';
+            
+            container.appendChild(nameInput);
+            container.appendChild(tagsInput);
+
+            const handleKeyDown = (event) => {
+                if (event.key === 'Enter') {
+                    const itemName = nameInput.value.trim();
+                    const tags = tagsInput.value.trim().split(',').map(t => t.trim()).filter(t => t);
+                    createTag(quadrantId, itemName, tags);
+                    container.remove();
+                } else if (event.key === 'Escape') {
+                    container.remove();
+                }
+            };
+
+            nameInput.addEventListener('keydown', handleKeyDown);
+            tagsInput.addEventListener('keydown', handleKeyDown);
+            container.addEventListener('blur', (e) => {
+                if (!container.contains(e.relatedTarget)) {
+                    setTimeout(() => container.remove(), 100);
+                }
+            }, true);
+            
+            quadrant.appendChild(container);
+            nameInput.focus();
+        }
+        
+        function deleteItem(event) {
+            event.stopPropagation();
+            event.target.closest('.item-tag').remove();
+            saveState();
+        }
+        
+        function updateQuadrantDescriptions() {
+            const yAxisLabel = document.getElementById('axis-y-label').textContent;
+            const xAxisLabel = document.getElementById('axis-x-label').textContent;
+
+            const yParts = yAxisLabel.split('|').map(s => s.replace(/<-->/g, '').trim());
+            const xParts = xAxisLabel.split('|').map(s => s.replace(/<-->/g, '').trim());
+
+            const [yLow, yHigh] = yParts.length === 2 ? yParts : ['Y Low', 'Y High'];
+            const [xLow, xHigh] = xParts.length === 2 ? xParts : ['X Low', 'X High'];
+
+            document.getElementById('q1-desc').textContent = `${xHigh}, ${yHigh}`;
+            document.getElementById('q2-desc').textContent = `${xHigh}, ${yLow}`;
+            document.getElementById('q3-desc').textContent = `${xLow}, ${yHigh}`;
+            document.getElementById('q4-desc').textContent = `${xLow}, ${yLow}`;
+            
+            saveState();
+        }
+
+        // --- DRAG & DROP ---
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+            const target = ev.target.closest('.quadrant');
+            if (target) target.classList.add('drag-over');
+        }
+        
+        function dragLeave(ev) {
+            const target = ev.target.closest('.quadrant');
+            if (target) target.classList.remove('drag-over');
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text/plain", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const dropTarget = ev.target.closest('.quadrant');
+            if (dropTarget) {
+                dropTarget.classList.remove('drag-over');
+                const data = ev.dataTransfer.getData("text/plain");
+                const draggedElement = document.getElementById(data);
+                if (draggedElement && !ev.target.closest('.temp-input-container')) {
+                    dropTarget.appendChild(draggedElement);
+                    saveState();
+                }
+            }
+        }
+        
+        // --- INITIALIZATION ---
+
+        window.onload = () => {
+            loadState();
+            document.querySelectorAll('.editable').forEach(el => {
+                el.addEventListener('input', updateQuadrantDescriptions);
+            });
+        };
+
+    </script>
+</body>
+</html>
