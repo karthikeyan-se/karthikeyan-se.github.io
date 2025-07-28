@@ -106,11 +106,13 @@
         <h1>Welcome</h1>
         <p>Enjoy your Stay!</p>
         <ul class="links">
-            <li><a href="/calculators/market-size.html">Market Opportunity Calculator</a></li>
-            <li><a href="/utils/quadrant-builder.html">Interactive Quadrant Visualizer</a></li>
-            <li><a href="/pages/21-cfr-part-11.html">21 CFR Part 11: Demystified</a></li>
-            <li><a href="/pages/21-cfr-part-11-ai.html">21 CFR Part 11: Demystified (AI)</a></li>
-            <li><a href="/pages/esignature-laws-map.html">Interactive E-Signature Law Map</a></li>
+          {% for page in site.pages %}
+            {% if page.title and page.url != '/' %}
+              <li>
+                <a href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
         </ul>
     </div>
 
