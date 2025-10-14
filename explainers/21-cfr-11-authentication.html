@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -77,6 +78,9 @@
          .flow-arrow.down-fail::before {
             border-top-color: #dc2626;
         }
+        .material-symbols-outlined {
+            vertical-align: bottom;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -106,18 +110,18 @@
                             <!-- User Flow -->
                             <div class="w-1/2">
                                 <h4 class="font-bold text-center text-green-600 mb-4">Legitimate User</h4>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>1. Provides ID</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">person</span>1. Provides ID</div>
                                 <div class="flow-arrow down-success"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" /></svg>2. Provides Password</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">key</span>2. Provides Password</div>
                                 <div class="flow-arrow down-success"></div>
                                 <div class="flow-step bg-green-100 border border-green-200 text-green-800 rounded-lg p-3 font-semibold">Signature Successful</div>
                             </div>
                             <!-- Attacker Flow -->
                             <div class="w-1/2">
                                 <h4 class="font-bold text-center text-red-600 mb-4">Attacker with Email Access</h4>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>1. Knows ID</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">person</span>1. Knows ID</div>
                                 <div class="flow-arrow down-fail"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" /></svg>2. Lacks Password</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">key</span>2. Lacks Password</div>
                                 <div class="flow-arrow down-fail"></div>
                                 <div class="flow-step bg-red-100 border border-red-200 text-red-800 rounded-lg p-3 font-semibold">Signature Blocked</div>
                             </div>
@@ -127,22 +131,32 @@
                     <!-- Analysis Column -->
                     <div class="space-y-6">
                         <div class="bg-green-100 border border-green-200 text-green-800 p-6 rounded-xl shadow-lg flex items-center">
-                             <svg class="w-12 h-12 mr-5 flex-shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                             <span class="material-symbols-outlined mr-4 text-green-600" style="font-size: 3rem;">check_circle</span>
                             <div>
                                 <h2 class="text-3xl font-bold text-green-900">Compliant</h2>
                                 <p class="text-green-700">This method meets core technical requirements.</p>
                             </div>
                         </div>
                         <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
-                            <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>§ 11.200 Analysis (Components)</h4>
+                            <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-blue-500">splitscreen</span>§ 11.200 Analysis (Components)</h4>
                             <p>This model is compliant because the ID and Password are "distinct components." The password is a secret known only to the user and is stored separately from their email account.</p>
+                            <div class="bg-gray-50 border-l-4 border-blue-300 p-4 mt-3 rounded-r-lg">
+                                <p class="text-sm italic text-gray-600">
+                                    <strong>Regulation §11.200(a)(1):</strong> "Electronic signatures that are not based upon biometrics shall... Employ at least two distinct identification components such as an identification code and password."
+                                </p>
+                            </div>
                         </div>
                          <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
-                            <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 0118 0c.001-.06.002-.12.002-.178a11.962 11.962 0 00-2.382-7.152z" /></svg>§ 11.300 Analysis (Risks & Controls)</h4>
+                            <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-orange-500">security</span>§ 11.300 Analysis (Risks & Controls)</h4>
                             <p class="font-semibold text-gray-800">Primary Risk: Static Credential Theft</p>
                             <p>The password is static and can be stolen via phishing. The "Forgot Password" flow via email is a key vulnerability.</p>
                             <p class="font-semibold text-gray-800 mt-2">Mitigation:</p>
                             <p>Risk is managed through rigorous <strong class="text-orange-600">procedural controls</strong>: documented SOPs for loss management, strict identity verification for password resets, and security notifications.</p>
+                             <div class="bg-gray-50 border-l-4 border-orange-300 p-4 mt-3 rounded-r-lg">
+                                <p class="text-sm italic text-gray-600">
+                                    <strong>Regulation §11.300(d):</strong> "...Use of transaction safeguards to prevent unauthorized use of passwords and/or identification codes, and to detect and report in an immediate and urgent manner any attempts at their unauthorized use..."
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -158,18 +172,18 @@
                             <!-- User Flow -->
                             <div class="w-1/2">
                                 <h4 class="font-bold text-center text-green-600 mb-4">Legitimate User</h4>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.682l7.997 3.202A2 2 0 0119 7.884V14a2 2 0 01-2 2H3a2 2 0 01-2-2V7.884a2 2 0 011.003-1.999zM11 11V6l-2-1-2 1v5l2 1 2-1z" /></svg>1. Clicks Email Link</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>1. Clicks Email Link</div>
                                 <div class="flow-arrow down-success"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2h-2zM9 4a1 1 0 011-1h2a1 1 0 011 1v1H9V4z" clip-rule="evenodd" /></svg>2. Enters SMS OTP</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">sms</span>2. Enters SMS OTP</div>
                                 <div class="flow-arrow down-success"></div>
                                 <div class="flow-step bg-green-100 border border-green-200 text-green-800 rounded-lg p-3 font-semibold">Signature Successful</div>
                             </div>
                             <!-- Attacker Flow -->
                             <div class="w-1/2">
                                 <h4 class="font-bold text-center text-red-600 mb-4">Attacker with Email Access</h4>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.682l7.997 3.202A2 2 0 0119 7.884V14a2 2 0 01-2 2H3a2 2 0 01-2-2V7.884a2 2 0 011.003-1.999zM11 11V6l-2-1-2 1v5l2 1 2-1z" /></svg>1. Clicks Email Link</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>1. Clicks Email Link</div>
                                 <div class="flow-arrow down-fail"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2h-2zM9 4a1 1 0 011-1h2a1 1 0 011 1v1H9V4z" clip-rule="evenodd" /></svg>2. Lacks Phone/OTP</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">phone_locked</span>2. Lacks Phone/OTP</div>
                                 <div class="flow-arrow down-fail"></div>
                                 <div class="flow-step bg-red-100 border border-red-200 text-red-800 rounded-lg p-3 font-semibold">Signature Blocked</div>
                             </div>
@@ -179,22 +193,32 @@
                     <!-- Analysis Column -->
                     <div class="space-y-6">
                         <div class="bg-green-100 border border-green-200 text-green-800 p-6 rounded-xl shadow-lg flex items-center">
-                            <svg class="w-12 h-12 mr-5 flex-shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                             <span class="material-symbols-outlined mr-4 text-green-600" style="font-size: 3rem;">check_circle</span>
                             <div>
                                 <h2 class="text-3xl font-bold text-green-900">Compliant (Highly Secure)</h2>
                                 <p class="text-green-700">This is a very strong and widely accepted model.</p>
                             </div>
                         </div>
                         <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
-                            <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>§ 11.200 Analysis (Components)</h4>
+                             <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-blue-500">splitscreen</span>§ 11.200 Analysis (Components)</h4>
                             <p>This is a clear example of two distinct components. They rely on separate communication channels (email vs. SMS) and separate devices (computer vs. phone). Compromising one does not compromise the other.</p>
+                             <div class="bg-gray-50 border-l-4 border-blue-300 p-4 mt-3 rounded-r-lg">
+                                <p class="text-sm italic text-gray-600">
+                                    <strong>Regulation §11.200(a)(1):</strong> "Electronic signatures that are not based upon biometrics shall... Employ at least two distinct identification components such as an identification code and password."
+                                </p>
+                            </div>
                         </div>
                          <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
-                            <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 0118 0c.001-.06.002-.12.002-.178a11.962 11.962 0 00-2.382-7.152z" /></svg>§ 11.300 Analysis (Risks & Controls)</h4>
+                            <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-orange-500">security</span>§ 11.300 Analysis (Risks & Controls)</h4>
                             <p class="font-semibold text-gray-800">Primary Risk: Credential Change / SIM Swap</p>
                             <p>An attacker could use social engineering to trick a mobile carrier into transferring the phone number to a new SIM card.</p>
                              <p class="font-semibold text-gray-800 mt-2">Mitigation:</p>
                              <p>This is an external risk. Internally, the system must have rigorous <strong class="text-orange-600">procedural controls</strong> for changing a registered phone number, requiring stringent identity proofing before any update.</p>
+                             <div class="bg-gray-50 border-l-4 border-orange-300 p-4 mt-3 rounded-r-lg">
+                                <p class="text-sm italic text-gray-600">
+                                    <strong>Regulation §11.300(c):</strong> "Following loss management procedures to electronically deauthorize lost, stolen, missing, or otherwise potentially compromised tokens...and to issue temporary or permanent replacements using suitable, rigorous controls."
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,18 +234,18 @@
                             <!-- User Flow -->
                             <div class="w-1/2">
                                 <h4 class="font-bold text-center text-green-600 mb-4">Legitimate User</h4>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.682l7.997 3.202A2 2 0 0119 7.884V14a2 2 0 01-2 2H3a2 2 0 01-2-2V7.884a2 2 0 011.003-1.999zM11 11V6l-2-1-2 1v5l2 1 2-1z" /></svg>1. Clicks Email Link</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>1. Clicks Email Link</div>
                                 <div class="flow-arrow down-success"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" /></svg>2. Enters Access Code</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">password</span>2. Enters Access Code</div>
                                 <div class="flow-arrow down-success"></div>
                                 <div class="flow-step bg-green-100 border border-green-200 text-green-800 rounded-lg p-3 font-semibold">Signature Successful</div>
                             </div>
                             <!-- Attacker Flow -->
                             <div class="w-1/2">
                                 <h4 class="font-bold text-center text-red-600 mb-4">Attacker with Email Access</h4>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.682l7.997 3.202A2 2 0 0119 7.884V14a2 2 0 01-2 2H3a2 2 0 01-2-2V7.884a2 2 0 011.003-1.999zM11 11V6l-2-1-2 1v5l2 1 2-1z" /></svg>1. Clicks Email Link</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>1. Clicks Email Link</div>
                                 <div class="flow-arrow down-fail"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" /></svg>2. Lacks Access Code</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">password</span>2. Lacks Access Code</div>
                                 <div class="flow-arrow down-fail"></div>
                                 <div class="flow-step bg-red-100 border border-red-200 text-red-800 rounded-lg p-3 font-semibold">Signature Blocked</div>
                             </div>
@@ -231,18 +255,23 @@
                     <!-- Analysis Column -->
                     <div class="space-y-6">
                         <div class="bg-red-100 border border-red-200 text-red-800 p-6 rounded-xl shadow-lg flex items-center">
-                            <svg class="w-12 h-12 mr-5 flex-shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="material-symbols-outlined mr-4 text-red-600" style="font-size: 3rem;">cancel</span>
                             <div>
                                 <h2 class="text-3xl font-bold text-red-900">Non-Compliant</h2>
                                 <p class="text-red-700">Fails as a standalone solution for Part 11.</p>
                             </div>
                         </div>
                         <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
-                            <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>§ 11.200 Analysis (Components)</h4>
+                             <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-blue-500">splitscreen</span>§ 11.200 Analysis (Components)</h4>
                             <p>This method is non-compliant because it is a single-factor system. The "access code" is just one component. It lacks a second *distinct* component that is uniquely tied to the individual signer.</p>
+                             <div class="bg-gray-50 border-l-4 border-blue-300 p-4 mt-3 rounded-r-lg">
+                                <p class="text-sm italic text-gray-600">
+                                    <strong>Regulation §11.100(a):</strong> "Each electronic signature shall be unique to one individual and shall not be reused by, or reassigned to, anyone else."
+                                </p>
+                            </div>
                         </div>
                          <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
-                             <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 0118 0c.001-.06.002-.12.002-.178a11.962 11.962 0 00-2.382-7.152z" /></svg>§ 11.300 Analysis (Risks & Controls)</h4>
+                             <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-orange-500">security</span>§ 11.300 Analysis (Risks & Controls)</h4>
                             <p class="font-semibold text-gray-800">Primary Risk: Shared Secret & Transmission Risk</p>
                             <p>The code is a shared secret, not unique to the user. Its security depends entirely on how the sender transmits it. It can be shared or forwarded, breaking non-repudiation.</p>
                              <p class="font-semibold text-gray-800 mt-2">Mitigation:</p>
@@ -262,20 +291,20 @@
                             <!-- User Flow -->
                             <div class="w-1/2">
                                 <h4 class="font-bold text-center text-green-600 mb-4">Legitimate User</h4>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.682l7.997 3.202A2 2 0 0119 7.884V14a2 2 0 01-2 2H3a2 2 0 01-2-2V7.884a2 2 0 011.003-1.999zM11 11V6l-2-1-2 1v5l2 1 2-1z" /></svg>1. Provides Email</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>1. Provides Email</div>
                                 <div class="flow-arrow down-success"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.682l7.997 3.202A2 2 0 0119 7.884V14a2 2 0 01-2 2H3a2 2 0 01-2-2V7.884a2 2 0 011.003-1.999zM11 11V6l-2-1-2 1v5l2 1 2-1z" /></svg>2. Enters Email OTP</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>2. Enters Email OTP</div>
                                 <div class="flow-arrow down-success"></div>
                                 <div class="flow-step bg-green-100 border border-green-200 text-green-800 rounded-lg p-3 font-semibold">Signature Successful</div>
                             </div>
                             <!-- Attacker Flow -->
                             <div class="w-1/2">
                                 <h4 class="font-bold text-center text-red-600 mb-4">Attacker with Email Access</h4>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.682l7.997 3.202A2 2 0 0119 7.884V14a2 2 0 01-2 2H3a2 2 0 01-2-2V7.884a2 2 0 011.003-1.999zM11 11V6l-2-1-2 1v5l2 1 2-1z" /></svg>1. Provides Email</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>1. Provides Email</div>
                                 <div class="flow-arrow down-fail"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.682l7.997 3.202A2 2 0 0119 7.884V14a2 2 0 01-2 2H3a2 2 0 01-2-2V7.884a2 2 0 011.003-1.999zM11 11V6l-2-1-2 1v5l2 1 2-1z" /></svg>2. Gets OTP from Email</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>2. Gets OTP from Email</div>
                                 <div class="flow-arrow down-fail"></div>
-                                <div class="flow-step bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg p-3 font-semibold">Signature Falsified!</div>
+                                <div class="flow-step bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg p-3 font-semibold"><span class="material-symbols-outlined mr-2">warning</span>Signature Falsified!</div>
                             </div>
                         </div>
                     </div>
@@ -283,18 +312,23 @@
                     <!-- Analysis Column -->
                     <div class="space-y-6">
                         <div class="bg-red-100 border border-red-200 text-red-800 p-6 rounded-xl shadow-lg flex items-center">
-                            <svg class="w-12 h-12 mr-5 flex-shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="material-symbols-outlined mr-4 text-red-600" style="font-size: 3rem;">cancel</span>
                             <div>
                                 <h2 class="text-3xl font-bold text-red-900">Non-Compliant</h2>
                                 <p class="text-red-700">This method fails the core technical requirement.</p>
                             </div>
                         </div>
                         <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
-                            <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>§ 11.200 Analysis (Components)</h4>
+                            <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-blue-500">splitscreen</span>§ 11.200 Analysis (Components)</h4>
                             <p>This model is non-compliant because the two components are not distinct. Both the identifier and the authenticator are controlled by a single asset: the email inbox. This collapses two security layers into one.</p>
+                             <div class="bg-gray-50 border-l-4 border-blue-300 p-4 mt-3 rounded-r-lg">
+                                <p class="text-sm italic text-gray-600">
+                                    <strong>Regulation §11.200(a)(1):</strong> "Electronic signatures that are not based upon biometrics shall... Employ at least two distinct identification components such as an identification code and password."
+                                </p>
+                            </div>
                         </div>
                          <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
-                             <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 0118 0c.001-.06.002-.12.002-.178a11.962 11.962 0 00-2.382-7.152z" /></svg>§ 11.300 Analysis (Risks & Controls)</h4>
+                             <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-orange-500">security</span>§ 11.300 Analysis (Risks & Controls)</h4>
                             <p class="font-semibold text-gray-800">Primary Risk: Single Channel Compromise</p>
                             <p>If an attacker gains access to the user's email, they have everything needed to forge a signature. </p>
                              <p class="font-semibold text-gray-800 mt-2">Mitigation:</p>
@@ -329,3 +363,4 @@
     </script>
 </body>
 </html>
+
