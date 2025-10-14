@@ -304,13 +304,13 @@
                                 <div class="flow-step bg-green-100 border border-green-200 text-green-800 rounded-lg p-3 font-semibold">Signature Successful</div>
                             </div>
                             <!-- Attacker Flow -->
-                            <div class="w-1/2">
-                                <h4 class="font-bold text-center text-red-600 mb-4">Attacker with Email Access</h4>
+                             <div class="w-1/2">
+                                <h4 class="font-bold text-center text-red-600 mb-4">Sender (Malicious Intent)</h4>
                                 <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">mail</span>1. Clicks Email Link</div>
                                 <div class="flow-arrow down-fail"></div>
-                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">password</span>2. Lacks Access Code</div>
+                                <div class="flow-step bg-slate-100 border border-slate-200 rounded-lg p-3 text-slate-700"><span class="material-symbols-outlined mr-2">password</span>2. Knows Access Code</div>
                                 <div class="flow-arrow down-fail"></div>
-                                <div class="flow-step bg-red-100 border border-red-200 text-red-800 rounded-lg p-3 font-semibold">Signature Blocked</div>
+                                <div class="flow-step bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg p-3 font-semibold"><span class="material-symbols-outlined mr-2">warning</span>Signature Falsified!</div>
                             </div>
                         </div>
                     </div>
@@ -321,12 +321,12 @@
                             <span class="material-symbols-outlined mr-4 text-red-600" style="font-size: 3rem;">cancel</span>
                             <div>
                                 <h2 class="text-3xl font-bold text-red-900">Non-Compliant</h2>
-                                <p class="text-red-700">Fails as a standalone solution for Part 11.</p>
+                                <p class="text-red-700">This method fails multiple core principles.</p>
                             </div>
                         </div>
                         <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
                              <h4 class="font-bold text-xl text-blue-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-blue-500">splitscreen</span>§ 11.200 Analysis (Components)</h4>
-                            <p>This method is non-compliant because it is a single-factor system. The "access code" is just one component. It lacks a second *distinct* component that is uniquely tied to the individual signer.</p>
+                            <p>This method fails because the access code is not a valid identification component. While it appears to be a second component, it is not uniquely associated with or controlled by the signer.</p>
                              <div class="bg-gray-50 border-l-4 border-blue-300 p-4 mt-3 rounded-r-lg">
                                 <p class="text-sm italic text-gray-600">
                                     <strong>Regulation §11.100(a):</strong> "Each electronic signature shall be unique to one individual and shall not be reused by, or reassigned to, anyone else."
@@ -335,10 +335,15 @@
                         </div>
                          <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-lg">
                              <h4 class="font-bold text-xl text-orange-700 mb-3 flex items-center"><span class="material-symbols-outlined mr-3 text-orange-500">security</span>§ 11.300 Analysis (Risks & Controls)</h4>
-                            <p class="font-semibold text-gray-800">Primary Risk: Shared Secret & Transmission Risk</p>
-                            <p>The code is a shared secret, not unique to the user. Its security depends entirely on how the sender transmits it. It can be shared or forwarded, breaking non-repudiation.</p>
+                            <p class="font-semibold text-gray-800">Primary Risk: Shared Secret Known by Sender</p>
+                            <p>The code is known by both the sender and the signer. This breaks the principle of non-repudiation, as the system cannot prove that the sender did not impersonate the signer.</p>
                              <p class="font-semibold text-gray-800 mt-2">Mitigation:</p>
-                             <p>This model's security rests on human action, which is not a valid technical control. The risk <strong class="text-orange-600">cannot be systematically mitigated</strong> to meet compliance standards.</p>
+                             <p>This model's security rests on trust, not technical controls. The risk <strong class="text-orange-600">cannot be systematically mitigated</strong> to meet compliance standards.</p>
+                              <div class="bg-gray-50 border-l-4 border-orange-300 p-4 mt-3 rounded-r-lg">
+                                <p class="text-sm italic text-gray-600">
+                                    <strong>Regulation §11.200(a)(2):</strong> Electronic signatures... shall... "Be used only by their genuine owners".
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
