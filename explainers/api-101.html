@@ -97,6 +97,11 @@ title: API - A crash course
       <button class="tab-btn" data-tab="quiz">Quiz</button>
       <button class="tab-btn" data-tab="glossary">Glossary</button>
     </nav>
+    <div class="kvs" id="voiceBar" style="margin: -4px 0 16px 0; gap:10px; align-items:center;">
+      <label for="voiceSelect">Voice</label>
+      <select id="voiceSelect" class="btn" style="min-width:240px"></select>
+      <span class="help" id="voiceHelp">Tip: pick “Google UK English” if available.</span>
+    </div>
 
     <!-- BASICS -->
     <section class="tab active" id="tab-basics">
@@ -589,8 +594,8 @@ Signature: t=...,v1=...
     (function(){
       // Scripts per tab (kept concise, TTS-friendly). No backticks used.
       var VO = {
-        basics: "APIs are how apps talk to each other—like a waiter carrying orders between you and the kitchen. The menu is the documentation. It tells us what we can ask for and how to ask. Our request is the order slip: it has an action, an address, and optional details. The server cooks the request and sends a response back—either food or a clear message about what went wrong. In this lesson, we keep it simple with a restaurant theme: GET slash pizza to read what is available, and POST slash orders to place an order. By the end, you will know how to read docs, send a request, and understand the response code and the data you get back.",
-        call: "Every API call has four parts. First, the method: that is the verb, like GET to read or POST to create. Second, the URL: the base address plus a path like slash pizza or slash orders. Third, headers: metadata like our Authorization header with a secret key. And finally, the body: usually JSON, only when we are sending details like the items in an order. When I press Send, the page shows the raw HTTP request on the left and the response on the right. If Require API key is on but the key is blank, we get a 401 Unauthorized. If Busy kitchen is on, we get 429 Too Many Requests—slow down and retry.",
+        basics: "API is how apps talk to each other. Like how you and the kitchen talk to each other in a restaurant using the waitress. The waitress is the API. The menu is the documentation. It tells us what we can ask for and how to ask. Our order is the request: it has an action, an address, and optional details. The server cooks the request and sends a response back—either food or a clear message about what went wrong. In this lesson, we keep it simple with a restaurant theme. By the end, you will know how to read docs, send a request, and understand the response code and the data you get back.",
+        call: "Every API call has four parts. First, the method: that is the verb, like GET to read, or POST to create. Second, the URL: the base address plus a path like slash pizza or slash orders. Third, headers: metadata like our Authorization header with a secret key (to identify oneself). And finally, the body: usually JSON, only when we are sending details like the items in an order. When you press Send, the page shows the raw HTTP request on the left and the response on the right. If Require API key is on but the key is blank, we get a 401 Unauthorized. If Busy kitchen is on, we get 429 Too Many Requests—slow down and retry.",
         data: "Every response has a status code and usually data. Two hundreds mean success, like 200 OK or 201 Created. Four hundreds mean our mistake, maybe a missing field or a bad key, like 400 or 401. Five hundreds mean their mistake, something broke in the kitchen. The JSON you see is just clean, labeled data. If you can read a packing slip, you can read JSON: names on the left, values on the right.",
         auth: "APIs must know who is calling. Two common options are API keys and OAuth. API keys are like a house key: simple and powerful, best for server to server use. We send them in the Authorization header and we keep them secret. OAuth is a valet key: users grant limited, temporary access to their own account on another service. Your app redirects them to approve access, then receives a short lived token. If a key or token leaks, revoke it immediately. Use least privilege, short lifetimes, and safe storage.",
         events: "There are two ways to learn about updates. Polling is you calling the API repeatedly: is my order ready yet. It is simple but can be wasteful. Webhooks flip it: they call your endpoint when something happens, like the restaurant texting you when the order is ready. A webhook is just an HTTP POST to your URL with a small JSON payload, for example type order.ready. Verify the signature to ensure it is genuine, then update your app.",
@@ -601,6 +606,76 @@ Signature: t=...,v1=...
       var synth = window.speechSynthesis;
       var currentUtterance = null;
       var currentBtn = null;
+
+      // --- Voice selection UI ---
+      var voiceSelect = document.getElementById('voiceSelect');
+      var voiceHelp = document.getElementById('voiceHelp');
+      var voices = [];
+      var PERSIST_KEY = 'api101.voiceName';
+
+      function preferredVoiceName(list) {
+        var i;
+        // Prefer Google UK voices if present
+        for (i=0;i<list.length;i++){ if (list[i].name && list[i].name.indexOf('Google UK English Female')>-1) return list[i].name; }
+        for (i=0;i<list.length;i++){ if (list[i].name && list[i].name.indexOf('Google UK English Male')>-1) return list[i].name; }
+        // Prefer any Google + en-GB
+        for (i=0;i<list.length;i++){ if (list[i].name && list[i].name.indexOf('Google')>-1 && list[i].lang && list[i].lang.indexOf('en-GB')===0) return list[i].name; }
+        // Otherwise any en-GB voice
+        for (i=0;i<list.length;i++){ if (list[i].lang && list[i].lang.indexOf('en-GB')===0) return list[i].name; }
+        return null;
+      }
+
+      function populateVoiceList(){
+        if (!synth || !voiceSelect) return;
+        voices = synth.getVoices() || [];
+        voiceSelect.innerHTML = '';
+
+        if (voices.length === 0) {
+          var opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'System default (voices not loaded yet)';
+          voiceSelect.appendChild(opt);
+          return;
+        }
+
+        var selected = localStorage.getItem(PERSIST_KEY);
+        if (!selected) {
+          var cand = preferredVoiceName(voices);
+          if (cand) selected = cand;
+        }
+
+        for (var i=0;i<voices.length;i++){
+          var v = voices[i];
+          var o = document.createElement('option');
+          o.value = v.name;
+          o.textContent = v.name + ' — ' + (v.lang || '');
+          if (selected && v.name === selected) { o.selected = true; }
+          voiceSelect.appendChild(o);
+        }
+        if (selected) localStorage.setItem(PERSIST_KEY, selected);
+      }
+
+      function findSelectedVoice(){
+        var name = voiceSelect && voiceSelect.value ? voiceSelect.value : localStorage.getItem(PERSIST_KEY);
+        var i;
+        for (i=0;i<voices.length;i++){ if (voices[i].name === name) return voices[i]; }
+        var candName = preferredVoiceName(voices);
+        for (i=0;i<voices.length;i++){ if (voices[i].name === candName) return voices[i]; }
+        return null;
+      }
+
+      if (voiceSelect) {
+        voiceSelect.addEventListener('change', function(){
+          localStorage.setItem(PERSIST_KEY, voiceSelect.value || '');
+        });
+      }
+
+      if (synth) {
+        populateVoiceList();
+        if (typeof synth.onvoiceschanged !== 'undefined') {
+          synth.onvoiceschanged = populateVoiceList;
+        }
+      }
 
       function resetBtn(){ if (currentBtn) { currentBtn.textContent = '🔊 Play voiceover'; currentBtn.removeAttribute('data-playing'); currentBtn = null; } }
 
@@ -613,9 +688,11 @@ Signature: t=...,v1=...
         if (!text) return;
         if (synth.speaking || synth.pending) { synth.cancel(); if (currentBtn === btn) { resetBtn(); return; } else { resetBtn(); } }
         currentUtterance = new SpeechSynthesisUtterance(text);
-        currentUtterance.rate = 1.0; // pace
+        var v = findSelectedVoice();
+        if (v) { currentUtterance.voice = v; currentUtterance.lang = v.lang || 'en-GB'; }
+        else { currentUtterance.lang = 'en-GB'; }
+        currentUtterance.rate = 1.0;
         currentUtterance.pitch = 1.0;
-        currentUtterance.lang = 'en-US';
         currentUtterance.onend = function(){ resetBtn(); };
         currentUtterance.onerror = function(){ resetBtn(); };
         currentBtn = btn; btn.textContent = '⏹ Stop'; btn.setAttribute('data-playing','1');
