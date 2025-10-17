@@ -149,10 +149,11 @@ title: API - A crash course
         <div class="hd"><h3>Lesson</h3></div>
         <div class="bd">
           <div id="lesson-basics" class="lesson-copy">
-            <p>An API is a digital waiter that lets one piece of software ask another for something in a predictable way. You simply pair a method (the action), a URL (where it goes), optional headers (polite extras), and sometimes a body (the details) to place a clear order.</p>
-            <p>In our restaurant story, the menu is the documentation, the waiter is the API, and the kitchen is the server. When you ask for a Margherita pizza the kitchen replies with a friendly 200 OK and the pizza; if the restaurant is shut you hear a 503, and if your order is messy you hear a 400.</p>
-            <p>Teams lean on APIs because they connect tools without manual work. At Signeasy it means customers can create files, send envelopes for signature, and pull signed copies straight into their systems automatically.</p>
-          </div>
+            <p>Think of an API as a friendly intermediary that lets two apps have a clear, polite conversation. One app describes what it wants, the API delivers that message in the exact format the other app understands, and then it carries the reply back. No guesswork, no long email threads—just crisp requests and answers.</p>
+            <p>Every request follows the same recipe: a method (what action you are asking for), a URL (where the request should go), optional headers (sticky notes with extra info, like who you are), and sometimes a body (the actual details to work with). Because the recipe is standard, any app that learns it can plug into any other app that speaks it.</p>
+            <p>The restaurant story is a perfect visual. Docs are the menu. The waiter is the API. You ask for a Margherita pizza. The kitchen returns it with a “200 OK” smile if all is well, a “400 Bad Request” if you forgot to say which size, or a “503 Service Unavailable” if the oven is down. Status codes are simply quick signals about how the kitchen handled your ticket.</p>
+            <p>Why does this matter if you are not writing code? APIs are what let CRMs push leads into marketing tools automatically, let finance dashboards pull fresh numbers, and let Signeasy customers create, send, and download agreements without touching the web app. Understanding the basics helps you design better customer journeys, scope integrations faster, and have smarter conversations with partners.</p>
+        </div>
           <div class="lesson-actions">
             <button class="btn secondary tiny tts-btn" data-vo="basics" data-lesson-target="lesson-basics">Listen</button>
           </div>
@@ -248,10 +249,12 @@ title: API - A crash course
         <div class="hd"><h3>Lesson</h3></div>
         <div class="bd">
           <div id="lesson-call" class="lesson-copy">
-            <p>Think of building an API call like filling out a neat order slip. First pick the method to signal the action—GET to fetch, POST to create, DELETE to cancel. Then take the base URL, tack on the path such as <code>/orders</code>, and you now know exactly where your request is headed.</p>
-            <p>Headers carry helpful context. The star is the API key, which proves who you are when it is tucked into the Authorization header. If you are sending details, choose the right Content-Type and drop the JSON body that lists the table number, pizza flavours, or anything else the kitchen needs.</p>
-            <p>When you press Send, the server replies with a status code and some data. A 201 Created plus a JSON receipt means the kitchen accepted the order; other status codes hint at what to adjust before you try again.</p>
-          </div>
+            <p>Constructing an API call is like filling out a service ticket that has very specific boxes. First pick the method—your action verb. GET says “show me,” POST says “create this,” PUT and PATCH say “update that,” and DELETE says “remove it.” Using the right verb clues the receiving system into what will happen next.</p>
+            <p>Next comes the destination. Combine the base URL (the company’s main API address) with a path that points to the exact thing you want. <code>https://api.restaurant.example/v1</code> is the lobby; <code>/pizza</code> or <code>/orders</code> is the specific counter you walk up to. Together they make a complete address.</p>
+            <p>Headers are the short notes you tape to the ticket. The Authorization header carries your API key—proof that you are allowed to be there. Content-Type tells the kitchen what format the body is in (usually JSON). If you include details like the table number or the list of pizzas, that goes in the body, formatted neatly so nothing gets misread.</p>
+            <p>Before you press Send, take a beat to scan the request: Does the verb match the goal? Does the path point to the right place? Are the headers and body filled in? The simulator on this page shows exactly what the raw request and response look like so you can get comfortable spotting the patterns.</p>
+            <p>Try experimenting: change the method, toggle the “require API key” switch, or edit the JSON body. Each tweak produces a different response. That cause-and-effect is the quickest way to build intuition, support customers, and brief engineers with confidence.</p>
+        </div>
           <div class="lesson-actions">
             <button class="btn secondary tiny tts-btn" data-vo="call" data-lesson-target="lesson-call">Listen</button>
           </div>
@@ -312,10 +315,12 @@ Content-Type: application/json
         <div class="hd"><h3>Lesson</h3></div>
         <div class="bd">
           <div id="lesson-data" class="lesson-copy">
-            <p>Every API response has two pieces: the status code that says how things went and the data that carries the details. A 200 series code is a thumbs up, while 400s and 500s flag issues you or the provider need to fix.</p>
-            <p>When the call succeeds you usually get a tidy JSON object. It lists what was created, timestamps, and helpful links so you can follow up. If something goes wrong the JSON swaps to an error shape with a message, hint, and documentation link to guide the fix.</p>
-            <p>Memorising a few codes pays off. 200 means all clear, 201 means something new was created, 401 means the key is missing, 404 is the wrong address, 429 is a gentle rate-limit warning, and 500 means the kitchen is having a bad day. The combination of code plus JSON tells you your next move.</p>
-          </div>
+            <p>An API response is a progress report. The first line—the status code—tells you whether things went smoothly. Numbers in the 200s are green lights. Codes in the 400s mean the request needs a tweak. Codes in the 500s say the provider is struggling and needs time to fix it.</p>
+            <p>Everything beneath that status line is the narrative. When the call works, the JSON body reads like a receipt: order number, what was created, timestamps, and helpful links. When something fails, the body shifts into coaching mode with an error name, a friendly message, and often a hint about how to recover.</p>
+            <p>Look at the two samples here. The success response proudly shows <code>HTTP/1.1 200 OK</code> and hands you the exact order details. The second response leads with <code>422 Unprocessable Entity</code> and explains that the request was missing an item list. The pairing of code + JSON gives you both the headline and the supporting paragraph.</p>
+            <p>If you memorise a handful of codes—200, 201, 204, 400, 401, 404, 409, 422, 429, 500—you can immediately translate what the API is telling you. That skill pays off during product demos, customer calls, and internal planning sessions.</p>
+            <p>Tip: whenever you see a code you do not recognise, read it aloud and then read the JSON story slowly. Treat it like a support ticket. In seconds you will know whether to adjust the request, resend later, or involve the provider.</p>
+        </div>
           <div class="lesson-actions">
             <button class="btn secondary tiny tts-btn" data-vo="data" data-lesson-target="lesson-data">Listen</button>
           </div>
@@ -353,10 +358,12 @@ Content-Type: application/json
         <div class="hd"><h3>Lesson</h3></div>
         <div class="bd">
           <div id="lesson-auth" class="lesson-copy">
-            <p>APIs only hand out data when they trust the caller. Authentication is the first check before any action happens, and it prevents unknown apps from reading private information or firing off actions.</p>
-            <p>API keys are the fastest route. You generate a long secret value, keep it outside your public code, and send it with each request in the Authorization header. Rotate the key regularly and delete any that leak.</p>
-            <p>OAuth is the go-to when end users need to connect their own accounts. They approve access on the provider’s consent page, you trade the short-lived code for a token, and you store that token securely. In both paths, give only the permissions you actually need, expire credentials when possible, and monitor for suspicious use.</p>
-          </div>
+            <p>APIs behave like secure offices: before you get past the lobby, you show who you are and why you are visiting. Authentication is that moment. Without it, anyone could wander in, peek at records, or perform actions under someone else’s name.</p>
+            <p>API keys are the simplest visitor badge. The provider gives your team a long secret code. You keep it out of public view—usually in environment variables or a vault—and include it in the Authorization header each time you call the API. If the key ever leaks, you cancel it immediately and generate a fresh one.</p>
+            <p>OAuth is the guest pass for individual users. Instead of sharing passwords with you, they land on a branded approval screen, review what data you are asking for, and grant permission. You receive a short-lived code, swap it for a token, and use that token until it expires. The user can revoke it at any time.</p>
+            <p>Whichever path you use, follow good hygiene: request only the scopes you need, rotate or expire credentials on a schedule, monitor for strange usage, and give customers a clear way to disconnect. These small habits build trust and make security reviews far easier.</p>
+            <p>When you can describe API keys and OAuth in plain language, customers feel comfortable connecting their systems—and you become the guide who makes integrations happen smoothly.</p>
+        </div>
           <div class="lesson-actions">
             <button class="btn secondary tiny tts-btn" data-vo="auth" data-lesson-target="lesson-auth">Listen</button>
           </div>
@@ -398,10 +405,12 @@ Signature: t=...,v1=...
         <div class="hd"><h3>Lesson</h3></div>
         <div class="bd">
           <div id="lesson-events" class="lesson-copy">
-            <p>There are two ways to stay updated after you place an order. Polling is you calling the API over and over—“is it ready yet?”—which is easy to understand but can waste time and request quota when nothing has changed.</p>
-            <p>Webhooks flip the script. You give the provider a URL to call, and when an event happens they send you a small JSON payload. It is like the kitchen texting you the moment the pizza leaves the oven so you do not have to call every few minutes.</p>
-            <p>To trust that message, verify the signature or secret included in the headers, update your system, and reply with a 200 to confirm you heard them. Use polling for quick experiments, but lean on webhooks once you care about real-time updates or want to avoid constant checking.</p>
-          </div>
+            <p>Once an order is placed, you usually want updates. Polling is the meet-up schedule: your app checks in every few minutes asking, “Any news?” It is easy to set up and works with almost any API, but it can be wasteful if the answer is usually “no change yet.”</p>
+            <p>Webhooks are the call you get the moment something happens. You hand the provider a special URL, and whenever a key event occurs they send a small JSON message to that address. Think of it as the restaurant texting you when the pizza leaves the oven so you can prepare the table immediately.</p>
+            <p>Because webhook messages arrive at your door, you double-check the sender. Providers include a signature header or shared secret. Your system verifies it, processes the update—mark the order complete, trigger an email—and replies with a 200 OK to say “message received.” If you cannot process it, most providers retry later.</p>
+            <p>Use polling for prototypes or when you simply need occasional updates. Switch to webhooks when customers expect instant notifications or when you want to save on hourly checks. Many teams blend the two: webhooks for immediate alerts, light polling as a safety net.</p>
+            <p>The big idea is that APIs support both “I’ll check back” and “tell me right away.” Knowing which to choose helps you design smoother customer experiences and keeps your systems efficient.</p>
+        </div>
           <div class="lesson-actions">
             <button class="btn secondary tiny tts-btn" data-vo="events" data-lesson-target="lesson-events">Listen</button>
           </div>
@@ -416,9 +425,11 @@ Signature: t=...,v1=...
         <div class="hd"><h3>Lesson</h3></div>
         <div class="bd">
           <div id="lesson-quiz" class="lesson-copy">
-            <p>This quiz is a quick pulse check, not a school exam. Pick the answers that feel right and notice the patterns—APIs connect systems, 200s mean success, and JSON is the structured message they share.</p>
-            <p>If you miss a question, celebrate it. Wrong answers show you exactly which idea to revisit in the earlier tabs. A few minutes here will make the vocabulary stick so your next customer conversation feels natural.</p>
-          </div>
+            <p>Ready to test the story you just learned? This quiz runs through the highlights: what an API does, how a request is built, what responses mean, and how security fits in. Every question mirrors conversations you might have with customers, partners, or your product team.</p>
+            <p>Pick the answer that feels right based on the lessons. If you are unsure, choose your best option and read the explanation that appears. The feedback is designed to give you talking points you can reuse in real meetings.</p>
+            <p>Missed one? Perfect. That tells you exactly which tab to revisit. Skim the lesson, hit the Listen button if you prefer audio, and try again. The goal is to make these concepts feel natural, not memorised.</p>
+            <p>Once you can breeze through the quiz, you will be able to articulate API basics in customer calls, brief engineers with clarity, and spot integration opportunities as they surface.</p>
+        </div>
           <div class="lesson-actions">
             <button class="btn secondary tiny tts-btn" data-vo="quiz" data-lesson-target="lesson-quiz">Listen</button>
           </div>
@@ -449,10 +460,11 @@ Signature: t=...,v1=...
         <div class="hd"><h3>Lesson</h3></div>
         <div class="bd">
           <div id="lesson-glossary" class="lesson-copy">
-            <p>This glossary is your translation guide. Each term has a plain-language meaning so you can jump into conversations without stopping to Google jargon.</p>
-            <p>Keep it open while you talk with customers or teammates. When someone drops a buzzword—endpoint, webhook, idempotency—scan the card, match the definition, and you are instantly back in the flow.</p>
-            <p>Over time you will memorise the ones you hear the most, and the glossary will fade from safety blanket to quick reference for the occasional curveball.</p>
-          </div>
+            <p>Think of this glossary as your API phrasebook. Each card translates a word you will hear in briefings, sales calls, or roadmap chats into everyday language.</p>
+            <p>Keep the page handy while you work. When someone drops a term like “endpoint,” “rate limit,” or “webhook,” one glance will reconnect you with what it means so you can stay present in the conversation.</p>
+            <p>After a few repetitions the core terms—status code, JSON, header—will stick. The glossary remains a trusty checkpoint for the less frequent ones such as “idempotency” or “versioning.”</p>
+            <p>Revisit it whenever you prepare for a meeting or a launch. Shared vocabulary helps every team—product, marketing, sales, design—pull in the same direction.</p>
+        </div>
           <div class="lesson-actions">
             <button class="btn secondary tiny tts-btn" data-vo="glossary" data-lesson-target="lesson-glossary">Listen</button>
           </div>
