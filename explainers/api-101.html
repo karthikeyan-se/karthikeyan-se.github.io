@@ -55,6 +55,9 @@ title: API - A crash course
     .btn.secondary { background:#f8fafc; }
     .btn:disabled { opacity:.6; cursor:not-allowed; }
 
+    /* tiny button for voiceover */
+    .btn.tiny { padding:6px 8px; font-size:12px; }
+
     .kvs { display:flex; flex-wrap: wrap; align-items:center; gap:8px; }
     .pill { display:inline-block; padding:4px 10px; background:#fff; border:1px solid var(--border); border-radius:999px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; }
 
@@ -101,6 +104,7 @@ title: API - A crash course
         <div class="hd">
           <h3>APIs: Your Digital Waiter</h3>
           <p>Simple definition + restaurant analogy for non‑engineers</p>
+          <div class="vo" style="margin-top:8px;"><button class="btn secondary tiny tts-btn" data-vo="basics">🔊 Play voiceover</button></div>
         </div>
         <div class="bd grid cols-3">
           <div class="card">
@@ -135,7 +139,7 @@ title: API - A crash course
     <!-- ANATOMY / REQUEST BUILDER -->
     <section class="tab" id="tab-call">
       <div class="card">
-        <div class="hd"><h3>Anatomy: Build a Request</h3><p>Method (action), URL (where), Headers (metadata like keys), Body (data)</p></div>
+        <div class="hd"><h3>Anatomy: Build a Request</h3><p>Method (action), URL (where), Headers (metadata like keys), Body (data)</p><div class="vo" style="margin-top:8px;"><button class="btn secondary tiny tts-btn" data-vo="call">🔊 Play voiceover</button></div></div>
         <div class="bd">
           <div class="row cols-4">
             <div>
@@ -221,7 +225,7 @@ title: API - A crash course
     <!-- STATUS & DATA -->
     <section class="tab" id="tab-data">
       <div class="card">
-        <div class="hd"><h3>The Response: Status Codes & Data</h3><p>Two parts: a 3‑digit code + JSON data</p></div>
+        <div class="hd"><h3>The Response: Status Codes & Data</h3><p>Two parts: a 3‑digit code + JSON data</p><div class="vo" style="margin-top:8px;"><button class="btn secondary tiny tts-btn" data-vo="data">🔊 Play voiceover</button></div></div>
         <div class="bd grid cols-2">
           <div>
             <h4>A good JSON response</h4>
@@ -266,7 +270,7 @@ title: API - A crash course
     <!-- SECURITY (AUTH) -->
     <section class="tab" id="tab-auth">
       <div class="card">
-        <div class="hd"><h3>Security: Authentication (Who are you?)</h3><p>How an API verifies your identity</p></div>
+        <div class="hd"><h3>Security: Authentication (Who are you?)</h3><p>How an API verifies your identity</p><div class="vo" style="margin-top:8px;"><button class="btn secondary tiny tts-btn" data-vo="auth">🔊 Play voiceover</button></div></div>
         <div class="bd grid cols-2">
           <div class="card">
             <div class="hd"><h3>API Keys (House key)</h3><p>Simple secrets for server‑to‑server use</p></div>
@@ -294,7 +298,7 @@ title: API - A crash course
     <!-- WEBHOOKS -->
     <section class="tab" id="tab-events">
       <div class="card">
-        <div class="hd"><h3>Webhooks vs Polling</h3><p>Two ways your app learns about changes</p></div>
+        <div class="hd"><h3>Webhooks vs Polling</h3><p>Two ways your app learns about changes</p><div class="vo" style="margin-top:8px;"><button class="btn secondary tiny tts-btn" data-vo="events">🔊 Play voiceover</button></div></div>
         <div class="bd grid cols-2">
           <div class="card">
             <div class="hd"><h3>Webhooks (push)</h3><p>The restaurant calls you when the order is ready</p></div>
@@ -325,13 +329,14 @@ Signature: t=...,v1=...
 
     <!-- QUIZ -->
     <section class="tab" id="tab-quiz">
+      <div class="kvs" style="margin-bottom:8px;"><button class="btn secondary tiny tts-btn" data-vo="quiz">🔊 Play voiceover</button></div>
       <div id="quizRoot" class="grid" style="gap:16px;"></div>
     </section>
 
     <!-- GLOSSARY -->
     <section class="tab" id="tab-glossary">
       <div class="card">
-        <div class="hd"><h3>Glossary</h3><p>Keep this open while discussing</p></div>
+        <div class="hd"><h3>Glossary</h3><p>Keep this open while discussing</p><div class="vo" style="margin-top:8px;"><button class="btn secondary tiny tts-btn" data-vo="glossary">🔊 Play voiceover</button></div></div>
         <div class="bd grid cols-2">
           <div class="card"><div class="bd"><strong>Endpoint</strong><div class="muted">A specific URL where you send a request (e.g., <code>/pizza</code>).</div></div></div>
           <div class="card"><div class="bd"><strong>Method</strong><div class="muted">The action you want (GET, POST, etc.).</div></div></div>
@@ -578,6 +583,59 @@ Signature: t=...,v1=...
         }
       }
       renderQuiz();
+    })();
+
+    // --- Voiceover (Web Speech API) ---
+    (function(){
+      // Scripts per tab (kept concise, TTS-friendly). No backticks used.
+      var VO = {
+        basics: "APIs are how apps talk to each other—like a waiter carrying orders between you and the kitchen. The menu is the documentation. It tells us what we can ask for and how to ask. Our request is the order slip: it has an action, an address, and optional details. The server cooks the request and sends a response back—either food or a clear message about what went wrong. In this lesson, we keep it simple with a restaurant theme: GET slash pizza to read what is available, and POST slash orders to place an order. By the end, you will know how to read docs, send a request, and understand the response code and the data you get back.",
+        call: "Every API call has four parts. First, the method: that is the verb, like GET to read or POST to create. Second, the URL: the base address plus a path like slash pizza or slash orders. Third, headers: metadata like our Authorization header with a secret key. And finally, the body: usually JSON, only when we are sending details like the items in an order. When I press Send, the page shows the raw HTTP request on the left and the response on the right. If Require API key is on but the key is blank, we get a 401 Unauthorized. If Busy kitchen is on, we get 429 Too Many Requests—slow down and retry.",
+        data: "Every response has a status code and usually data. Two hundreds mean success, like 200 OK or 201 Created. Four hundreds mean our mistake, maybe a missing field or a bad key, like 400 or 401. Five hundreds mean their mistake, something broke in the kitchen. The JSON you see is just clean, labeled data. If you can read a packing slip, you can read JSON: names on the left, values on the right.",
+        auth: "APIs must know who is calling. Two common options are API keys and OAuth. API keys are like a house key: simple and powerful, best for server to server use. We send them in the Authorization header and we keep them secret. OAuth is a valet key: users grant limited, temporary access to their own account on another service. Your app redirects them to approve access, then receives a short lived token. If a key or token leaks, revoke it immediately. Use least privilege, short lifetimes, and safe storage.",
+        events: "There are two ways to learn about updates. Polling is you calling the API repeatedly: is my order ready yet. It is simple but can be wasteful. Webhooks flip it: they call your endpoint when something happens, like the restaurant texting you when the order is ready. A webhook is just an HTTP POST to your URL with a small JSON payload, for example type order.ready. Verify the signature to ensure it is genuine, then update your app.",
+        quiz: "Let us lock this in with a quick quiz. Choose the best answer and notice the pattern: API equals interface, 401 is authentication, POST creates, and JSON is structured text. If something trips you up, that is perfect—that is where learning happens. By the end, these terms will feel familiar, not scary.",
+        glossary: "Here are the essentials. Endpoint: the specific URL path like slash pizza. Method: the action—GET, POST, PUT, DELETE. Header: metadata such as Authorization or Content Type. Body: the details you send, usually JSON. Status code: the three digit outcome. Rate limit: how fast you are allowed to call. Webhook: they call you with updates. Idempotency: safe to retry the same request. Keep this tab handy when you talk to customers."
+      };
+
+      var synth = window.speechSynthesis;
+      var currentUtterance = null;
+      var currentBtn = null;
+
+      function resetBtn(){ if (currentBtn) { currentBtn.textContent = '🔊 Play voiceover'; currentBtn.removeAttribute('data-playing'); currentBtn = null; } }
+
+      function speakKey(key, btn){
+        if (!('speechSynthesis' in window) || !window.SpeechSynthesisUtterance) {
+          alert('Voiceover is not supported in this browser. Try Chrome, Edge, or Safari.');
+          return;
+        }
+        var text = VO[key];
+        if (!text) return;
+        if (synth.speaking || synth.pending) { synth.cancel(); if (currentBtn === btn) { resetBtn(); return; } else { resetBtn(); } }
+        currentUtterance = new SpeechSynthesisUtterance(text);
+        currentUtterance.rate = 1.0; // pace
+        currentUtterance.pitch = 1.0;
+        currentUtterance.lang = 'en-US';
+        currentUtterance.onend = function(){ resetBtn(); };
+        currentUtterance.onerror = function(){ resetBtn(); };
+        currentBtn = btn; btn.textContent = '⏹ Stop'; btn.setAttribute('data-playing','1');
+        synth.speak(currentUtterance);
+      }
+
+      // Wire up buttons
+      var ttsBtns = document.querySelectorAll('.tts-btn');
+      for (var i=0;i<ttsBtns.length;i++){
+        (function(b){ b.addEventListener('click', function(){ speakKey(b.getAttribute('data-vo'), b); }); })(ttsBtns[i]);
+      }
+
+      // Stop speaking when switching tabs
+      var tabBtns = document.querySelectorAll('.tab-btn');
+      for (var j=0;j<tabBtns.length;j++){
+        tabBtns[j].addEventListener('click', function(){ if (synth && (synth.speaking || synth.pending)) { synth.cancel(); } resetBtn(); });
+      }
+
+      // Expose a tiny helper in case you want to trigger from console
+      window._speakTab = function(key){ var b = document.querySelector('.tts-btn[data-vo="'+key+'"]'); if (b) speakKey(key, b); };
     })();
   </script>
 </body>
