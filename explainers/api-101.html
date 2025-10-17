@@ -44,6 +44,15 @@ title: API - A crash course
     .lesson-card { margin-top: 20px; }
     .lesson-card .bd { display: grid; gap: 12px; }
     .lesson-actions { display:flex; gap:8px; }
+    .code-card { border-width: 2px; }
+    .code-card .hd { border-bottom: none; padding-bottom: 10px; }
+    .code-card .bd { padding-top: 10px; }
+    .code-card.code-2xx { border-color: #bbf7d0; background: #f0fdf4; }
+    .code-card.code-2xx .hd h3, .code-card.code-2xx .bd { color: #166534; }
+    .code-card.code-4xx { border-color: #fcd34d; background: #fffbeb; }
+    .code-card.code-4xx .hd h3, .code-card.code-4xx .bd { color: #b45309; }
+    .code-card.code-5xx { border-color: #fca5a5; background: #fef2f2; }
+    .code-card.code-5xx .hd h3, .code-card.code-5xx .bd { color: #b91c1c; }
 
     .muted { color: var(--muted); }
     .row { display:grid; gap:12px; margin: 10px 0; }
@@ -257,7 +266,10 @@ title: API - A crash course
         <div class="bd grid cols-2">
           <div>
             <h4>A good JSON response</h4>
-            <pre>{
+            <pre>HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
   "id": "order_901",
   "status": "preparing",
   "created_at": "2025-10-17T10:00:00Z",
@@ -268,7 +280,10 @@ title: API - A crash course
           </div>
           <div>
             <h4>An error response</h4>
-            <pre>{
+            <pre>HTTP/1.1 422 Unprocessable Entity
+Content-Type: application/json
+
+{
   "error": "invalid_request",
   "message": "items[] is required",
   "hint": "Add at least one item (e.g., margherita)",
@@ -281,16 +296,16 @@ title: API - A crash course
       <div class="card" style="margin-top:16px;">
         <div class="hd"><h3>Common status codes</h3><p>How servers communicate results</p></div>
         <div class="bd grid cols-3">
-          <div class="card"><div class="hd"><h3>200 — OK</h3></div><div class="bd muted">All good.</div></div>
-          <div class="card"><div class="hd"><h3>201 — Created</h3></div><div class="bd muted">A new thing was created.</div></div>
-          <div class="card"><div class="hd"><h3>204 — No Content</h3></div><div class="bd muted">Success with no body (e.g., delete).</div></div>
-          <div class="card"><div class="hd"><h3>400 — Bad Request</h3></div><div class="bd muted">The order slip is wrong.</div></div>
-          <div class="card"><div class="hd"><h3>401 — Unauthorized</h3></div><div class="bd muted">Missing or invalid API key.</div></div>
-          <div class="card"><div class="hd"><h3>404 — Not Found</h3></div><div class="bd muted">Wrong URL or missing resource.</div></div>
-          <div class="card"><div class="hd"><h3>409 — Conflict</h3></div><div class="bd muted">Duplicate/contradicting request.</div></div>
-          <div class="card"><div class="hd"><h3>422 — Unprocessable</h3></div><div class="bd muted">Data shape is valid, values are not.</div></div>
-          <div class="card"><div class="hd"><h3>429 — Too Many Requests</h3></div><div class="bd muted">Busy kitchen — wait, then retry.</div></div>
-          <div class="card"><div class="hd"><h3>500 — Server Error</h3></div><div class="bd muted">The kitchen broke — not your fault.</div></div>
+          <div class="card code-card code-2xx"><div class="hd"><h3>200 — OK</h3></div><div class="bd">All good.</div></div>
+          <div class="card code-card code-2xx"><div class="hd"><h3>201 — Created</h3></div><div class="bd">A new thing was created.</div></div>
+          <div class="card code-card code-2xx"><div class="hd"><h3>204 — No Content</h3></div><div class="bd">Success with no body (e.g., delete).</div></div>
+          <div class="card code-card code-4xx"><div class="hd"><h3>400 — Bad Request</h3></div><div class="bd">The order slip is wrong.</div></div>
+          <div class="card code-card code-4xx"><div class="hd"><h3>401 — Unauthorized</h3></div><div class="bd">Missing or invalid API key.</div></div>
+          <div class="card code-card code-4xx"><div class="hd"><h3>404 — Not Found</h3></div><div class="bd">Wrong URL or missing resource.</div></div>
+          <div class="card code-card code-4xx"><div class="hd"><h3>409 — Conflict</h3></div><div class="bd">Duplicate/contradicting request.</div></div>
+          <div class="card code-card code-4xx"><div class="hd"><h3>422 — Unprocessable</h3></div><div class="bd">Data shape is valid, values are not.</div></div>
+          <div class="card code-card code-4xx"><div class="hd"><h3>429 — Too Many Requests</h3></div><div class="bd">Busy kitchen — wait, then retry.</div></div>
+          <div class="card code-card code-5xx"><div class="hd"><h3>500 — Server Error</h3></div><div class="bd">The kitchen broke — not your fault.</div></div>
         </div>
       </div>
       <div class="card lesson-card">
@@ -314,7 +329,7 @@ title: API - A crash course
         <div class="hd"><h3>Security: Authentication (Who are you?)</h3><p>How an API verifies your identity</p></div>
         <div class="bd grid cols-2">
           <div class="card">
-            <div class="hd"><h3>API Keys (House key)</h3><p>Simple secrets for server‑to‑server use</p></div>
+            <div class="hd"><h3>API Keys</h3><p>Simple secrets for server‑to‑server use</p></div>
             <div class="bd muted">
               <p>Send in <code>Authorization: Bearer &lt;key&gt;</code>.</p>
               <p>Keep keys in env vars (e.g., <code>RESTAURANT_API_KEY</code>), not code or URLs.</p>
@@ -322,7 +337,7 @@ title: API - A crash course
             </div>
           </div>
           <div class="card">
-            <div class="hd"><h3>OAuth (Valet key)</h3><p>Users grant limited access</p></div>
+            <div class="hd"><h3>OAuth</h3><p>Users grant limited access</p></div>
             <div class="bd muted">
               <ol>
                 <li>User approves on provider's page</li>
@@ -338,9 +353,9 @@ title: API - A crash course
         <div class="hd"><h3>Lesson</h3></div>
         <div class="bd">
           <div id="lesson-auth" class="lesson-copy">
-            <p>APIs only hand out data when they trust the caller. Authentication is the quick “who are you?” check before the kitchen starts cooking. Without it, anyone could peek at private information or trigger actions they should not.</p>
-            <p>API keys are the simplest approach. You generate a long secret string, store it safely, and send it in the Authorization header with each request. Treat it like the front door key—keep it out of public code and rotate it if it ever leaks.</p>
-            <p>OAuth is more like a valet key. End users see a branded approval screen, agree to share specific data, and your app receives a short-lived token. It is perfect when you need access to a customer’s account without learning their password. In both cases, aim for least privilege, expire old credentials, and watch audit logs for unusual activity.</p>
+            <p>APIs only hand out data when they trust the caller. Authentication is the first check before any action happens, and it prevents unknown apps from reading private information or firing off actions.</p>
+            <p>API keys are the fastest route. You generate a long secret value, keep it outside your public code, and send it with each request in the Authorization header. Rotate the key regularly and delete any that leak.</p>
+            <p>OAuth is the go-to when end users need to connect their own accounts. They approve access on the provider’s consent page, you trade the short-lived code for a token, and you store that token securely. In both paths, give only the permissions you actually need, expire credentials when possible, and monitor for suspicious use.</p>
           </div>
           <div class="lesson-actions">
             <button class="btn secondary tiny tts-btn" data-vo="auth" data-lesson-target="lesson-auth">Listen</button>
