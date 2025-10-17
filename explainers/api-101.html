@@ -373,7 +373,7 @@ Idempotency-Key: a1b2c3
     };
 
     function fullUrl(){const base=(el.baseUrl.value||'').replace(/\/$/,'');const p=el.path.value||'';return base+(p.startsWith('/')?p:'/'+p)}
-    function headersObj(){const h={};if(["POST","PUT","PATCH"].includes(el.method.value))h['Content-Type']=el.contentType.value;if(el.requireKey.checked)h['Authorization']='Bearer '+(el.apiKey.value||'rk_test_12345');return h}
+    function headersObj(){const h={};if(["POST","PUT","PATCH"].includes(el.method.value)) h['Content-Type']=el.contentType.value;const key=(el.apiKey.value||'').trim();if(el.requireKey.checked && key){h['Authorization']='Bearer '+key;}return h}
     function pretty(o){try{return JSON.stringify(o,null,2)}catch{return String(o)}}
     function curl(){const headerFlags=Object.entries(headersObj()).map(([k,v])=>`-H "${k}: ${v}"`).join(' ');const dataFlag=["POST","PUT","PATCH"].includes(el.method.value)?`-d '${el.body.value||'{}'}'`:'';return `curl -X ${el.method.value} ${headerFlags?headerFlags+' ':''}${dataFlag} ${fullUrl()}`.trim()}
     function updateVisibility(){const showBody=["POST","PUT","PATCH"].includes(el.method.value);el.bodyBlock.style.display=showBody?'grid':'none'}
@@ -381,7 +381,7 @@ Idempotency-Key: a1b2c3
     function parseBodyOrNull(){const txt=el.body.value.trim();if(!txt)return null;try{return JSON.parse(txt)}catch{return{note:'Body is not valid JSON (sent as raw text in this demo).'}}}
 
     function fakeApiCall(){
-      el.sendBtn.disabled=true;const hasKey=!el.requireKey.checked||Boolean(el.apiKey.value)||true;
+      el.sendBtn.disabled=true;const hasKey = !el.requireKey.checked ? true : Boolean((el.apiKey.value||'').trim());
       setTimeout(()=>{
         let response={status:200,ok:true,json:{}};const now=new Date().toISOString();
         if(!hasKey){response={status:401,ok:false,json:{error:'Unauthorized',message:'Missing or invalid API key.'}}}
@@ -431,3 +431,4 @@ Idempotency-Key: a1b2c3
   </script>
 </body>
 </html>
+
