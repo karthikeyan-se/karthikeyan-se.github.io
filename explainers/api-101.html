@@ -1,0 +1,433 @@
+---
+title: API - A crash course
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>API 101 — Restaurant Analogy (Vanilla JS)</title>
+  <style>
+    :root { --bg:#f8fafc; --surface:#fff; --ink:#0f172a; --muted:#475569; --border:#e2e8f0; --good:#16a34a; --bad:#dc2626; }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--ink);background:linear-gradient(#fff,var(--bg))}
+    header{position:sticky;top:0;backdrop-filter:blur(8px);background:rgba(255,255,255,.9);border-bottom:1px solid var(--border);z-index:10}
+    .wrap{max-width:1080px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:36px;height:36px;border-radius:12px;background:#0f172a;color:#fff;display:grid;place-items:center;font-weight:700;box-shadow:0 2px 8px rgba(15,23,42,.2)}
+    .badge{display:inline-block;padding:4px 10px;border:1px solid var(--border);background:#f1f5f9;border-radius:999px;font-size:12px;color:var(--muted)}
+    main{max-width:1080px;margin:0 auto;padding:20px 16px 64px}
+    .tabs{margin:8px 0 20px;display:flex;flex-wrap:wrap;gap:8px;background:#f1f5f9;padding:6px;border-radius:12px}
+    .tab-btn{padding:8px 12px;border:none;border-radius:10px;background:transparent;cursor:pointer;color:var(--muted);font-weight:600}
+    .tab-btn[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 0 rgba(15,23,42,.05),0 1px 3px rgba(15,23,42,.06)}
+    .tab{display:none}.tab.active{display:block}
+    .grid{display:grid;gap:16px}
+    @media(min-width:860px){.grid.cols-2{grid-template-columns:1fr 1fr}.grid.cols-3{grid-template-columns:repeat(3,1fr)}.row.cols-3{grid-template-columns:1fr 1fr 1fr}.row.cols-4{grid-template-columns:1fr 1fr 1fr 1fr}}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 1px 0 rgba(15,23,42,.03)}
+    .card .hd{padding:14px 16px;border-bottom:1px solid var(--border)}
+    .card .hd h3{margin:0;font-size:16px}
+    .card .hd p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    .card .bd{padding:16px}
+    .muted{color:var(--muted)}
+    .row{display:grid;gap:12px;margin:10px 0}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+    input[type=text],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font:inherit;background:#fff}
+    textarea{resize:vertical}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:600}
+    .btn.primary{background:#0f172a;color:#fff;border-color:#0f172a}
+    .btn.secondary{background:#f8fafc}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .kvs{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+    .pill{display:inline-block;padding:4px 10px;background:#fff;border:1px solid var(--border);border-radius:999px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px}
+    pre{background:#0b1020;color:#d1e8ff;padding:12px;border-radius:10px;overflow:auto;font-size:12px;line-height:1.5}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .status{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;color:#fff}
+    .status.ok{background:var(--good)}.status.err{background:var(--bad)}
+    footer{margin-top:24px;font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo">API</div>
+        <div>
+          <div style="font-weight:800">API 101 — Restaurant Analogy</div>
+          <div class="muted" style="font-size:13px;">Explain APIs using a kitchen/menu/order metaphor. Live, safe demos.</div>
+        </div>
+      </div>
+      <span class="badge">Signeasy</span>
+    </div>
+  </header>
+
+  <main>
+    <nav class="tabs" role="tablist" aria-label="API 101 Tabs">
+      <button class="tab-btn" data-tab="basics" aria-selected="true">Basics</button>
+      <button class="tab-btn" data-tab="call">Make a call</button>
+      <button class="tab-btn" data-tab="data">Data & Errors</button>
+      <button class="tab-btn" data-tab="auth">Auth</button>
+      <button class="tab-btn" data-tab="events">Webhooks</button>
+      <button class="tab-btn" data-tab="design">Design choices</button>
+      <button class="tab-btn" data-tab="quiz">Quiz</button>
+      <button class="tab-btn" data-tab="glossary">Glossary</button>
+    </nav>
+
+    <!-- BASICS -->
+    <section class="tab active" id="tab-basics">
+      <div class="card">
+        <div class="hd"><h3>APIs in 60 seconds</h3><p>What, why, and how they help systems talk</p></div>
+        <div class="bd grid cols-3">
+          <div class="card">
+            <div class="hd"><h3>🌍 Definition</h3><p>An API is a contract: <em>“Ask like this, I’ll respond like that.”</em></p></div>
+            <div class="bd">
+              <ul>
+                <li><strong>Request</strong>: method + URL + headers + body</li>
+                <li><strong>Response</strong>: status code + data (usually JSON)</li>
+                <li><strong>Docs</strong> = the menu of what’s available</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="hd"><h3>🧋 Restaurant metaphor</h3><p>Menu = API docs · Order = Request · Kitchen = Server</p></div>
+            <div class="bd muted">
+              <p>Say “Latte, small” (well‑formed). Kitchen replies <code>200 OK</code> with your drink. If they’re closed: <code>503</code>. If order is invalid: <code>400</code>.</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="hd"><h3>🔗 Why it matters</h3><p>APIs stitch products together</p></div>
+            <div class="bd muted">
+              <p>In a restaurant app, APIs let you browse the menu, place orders, track status, and pay — from any device.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAKE A CALL -->
+    <section class="tab" id="tab-call">
+      <div class="card">
+        <div class="hd"><h3>Request Builder (safe simulator)</h3><p>Build a request, hit <em>Send</em>, and see a realistic response. Nothing leaves this page.</p></div>
+        <div class="bd">
+          <div class="row cols-4">
+            <div>
+              <label for="method">Method</label>
+              <select id="method"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select>
+            </div>
+            <div style="grid-column: span 2;">
+              <label for="baseUrl">Base URL</label>
+              <input id="baseUrl" type="text" value="https://api.restaurant.example/v1" />
+            </div>
+            <div>
+              <label for="path">Path</label>
+              <input id="path" type="text" value="/pizza" />
+            </div>
+          </div>
+
+          <div class="row cols-3" style="align-items:end;">
+            <div style="grid-column: span 2;">
+              <label for="apiKey">Staff API Key (Authorization header)</label>
+              <input id="apiKey" type="text" placeholder="rk_live_..." />
+              <div class="muted" style="font-size:12px;">Sent as <code>Authorization: Bearer &lt;key&gt;</code></div>
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <div class="kvs"><input id="requireKey" type="checkbox" checked /> <label for="requireKey">Require API key</label></div>
+            </div>
+          </div>
+
+          <div id="bodyBlock" class="row cols-3">
+            <div>
+              <label for="contentType">Content-Type</label>
+              <select id="contentType"><option value="application/json">application/json</option><option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option></select>
+            </div>
+            <div style="grid-column: span 2;">
+              <label for="body">Body (JSON)</label>
+              <textarea id="body" rows="7">{
+  "table": "A12",
+  "items": [
+    {"sku": "margherita", "qty": 2},
+    {"sku": "garlic_bread", "qty": 1}
+  ],
+  "notes": "Extra basil"
+}</textarea>
+            </div>
+          </div>
+
+          <div class="kvs" style="margin:14px 0;gap:14px;">
+            <span class="kvs"><input id="sim429" type="checkbox" /> <label for="sim429">Simulate busy kitchen (429)</label></span>
+            <button id="sendBtn" class="btn primary">➤ Send</button>
+            <button id="copyCurl" class="btn secondary">⎘ Copy cURL</button>
+            <span id="methodUrlPill" class="pill"></span>
+          </div>
+
+          <div class="grid cols-2">
+            <div class="card"><div class="hd"><h3>What you're sending</h3><p>Raw HTTP request</p></div><div class="bd"><pre id="rawRequest"></pre></div></div>
+            <div class="card">
+              <div class="hd"><h3 style="display:flex;align-items:center;gap:8px;">Response <span id="respStatus" class="status" style="display:none"></span></h3><p>Simulated server reply</p></div>
+              <div class="bd"><div class="muted" id="respHint">Hit <em>Send</em> to see the response here.</div><pre id="respBody" style="display:none"></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DATA & ERRORS -->
+    <section class="tab" id="tab-data">
+      <div class="card">
+        <div class="hd"><h3>The data you send & receive</h3><p>JSON is the lingua franca</p></div>
+        <div class="bd grid cols-2">
+          <div>
+            <h4>A good JSON response<\/h4>
+            <pre>{
+  "id": "order_901",
+  "status": "preparing",
+  "created_at": "2025-10-17T10:00:00Z",
+  "table": "A12",
+  "items": [{"sku":"margherita","qty":2},{"sku":"garlic_bread","qty":1}],
+  "links": { "check_status": "/orders/order_901" }
+}<\/pre>
+          </div>
+          <div>
+            <h4>An error response</h4>
+            <pre>{
+  "error": "invalid_request",
+  "message": "items[] is required",
+  "hint": "Add at least one item (e.g., margherita)",
+  "doc": "https://api.restaurant.example/errors#invalid_request"
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="hd"><h3>Common status codes</h3><p>How the kitchen communicates results</p></div>
+        <div class="bd grid cols-3">
+          <div class="card"><div class="hd"><h3>200 — OK</h3></div><div class="bd muted">Order fetched or updated successfully.</div></div>
+          <div class="card"><div class="hd"><h3>201 — Created</h3></div><div class="bd muted">A new order was created.</div></div>
+          <div class="card"><div class="hd"><h3>204 — No Content</h3></div><div class="bd muted">Order cancelled or nothing to return.</div></div>
+          <div class="card"><div class="hd"><h3>400 — Bad Request</h3></div><div class="bd muted">Malformed order (e.g., unknown item).</div></div>
+          <div class="card"><div class="hd"><h3>401 — Unauthorized</h3></div><div class="bd muted">Missing/invalid staff key.</div></div>
+          <div class="card"><div class="hd"><h3>404 — Not Found</h3></div><div class="bd muted">Wrong URL or unknown item/order.</div></div>
+          <div class="card"><div class="hd"><h3>409 — Conflict</h3></div><div class="bd muted">Order state prevents this action.</div></div>
+          <div class="card"><div class="hd"><h3>422 — Unprocessable</h3></div><div class="bd muted">Order is valid JSON, but business rules fail.</div></div>
+          <div class="card"><div class="hd"><h3>429 — Too Many Requests</h3></div><div class="bd muted">Busy kitchen; slow down (use backoff).</div></div>
+          <div class="card"><div class="hd"><h3>500 — Server Error</h3></div><div class="bd muted">Kitchen fault; try later.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTH -->
+    <section class="tab" id="tab-auth">
+      <div class="card">
+        <div class="hd"><h3>Authentication basics</h3><p>Proving who you are</p></div>
+        <div class="bd grid cols-2">
+          <div class="card">
+            <div class="hd"><h3>API Keys</h3><p>Simple secrets for server‑to‑server</p></div>
+            <div class="bd muted">
+              <p>Send in <code>Authorization: Bearer &lt;key&gt;</code>.</p>
+              <p>Keep keys in env vars (<code>RESTAURANT_API_KEY</code>), not code or URLs.</p>
+              <pre>Authorization: Bearer rk_live_abc123...</pre>
+            </div>
+          </div>
+          <div class="card">
+            <div class="hd"><h3>OAuth (3‑legged)</h3><p>Let diners connect their accounts</p></div>
+            <div class="bd muted">
+              <ol>
+                <li>Diner approves on provider’s page</li>
+                <li>Your app receives a short‑lived "code"</li>
+                <li>Exchange for an access token</li>
+              </ol>
+              <p>Great when users connect wallets, loyalty, etc.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEBHOOKS -->
+    <section class="tab" id="tab-events">
+      <div class="card">
+        <div class="hd"><h3>Webhooks vs Polling</h3><p>Learn when something changed</p></div>
+        <div class="bd grid cols-2">
+          <div class="card">
+            <div class="hd"><h3>Webhooks (push)</h3><p>Kitchen calls you when events happen</p></div>
+            <div class="bd muted">
+              <p>You expose a public HTTPS endpoint (e.g., <code>/webhooks/restaurant</code>).</p>
+              <p>Validate signatures to trust the sender.</p>
+              <pre>POST /webhooks/restaurant
+Signature: t=...,v1=...
+{
+  "type": "order.ready",
+  "data": { "id": "order_901" }
+}</pre>
+            </div>
+          </div>
+          <div class="card">
+            <div class="hd"><h3>Polling (pull)</h3><p>You check periodically</p></div>
+            <div class="bd muted">
+              <p>Call <code>GET /orders?status=preparing</code> every N seconds.</p>
+              <p>Use backoff & conditional requests to be polite.</p>
+              <pre>GET /orders?status=preparing
+200 OK
+[{"id": "order_901", "status": "preparing"}]</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN CHOICES -->
+    <section class="tab" id="tab-design">
+      <div class="card">
+        <div class="hd"><h3>REST, pagination, and idempotency</h3><p>Patterns you’ll see</p></div>
+        <div class="bd grid cols-3 muted">
+          <div class="card">
+            <div class="hd"><h3>REST shape</h3><p>Resources & endpoints</p></div>
+            <div class="bd">
+              <ul>
+                <li><code>GET /pizza</code> — list pizzas</li>
+                <li><code>POST /orders</code> — create an order</li>
+                <li><code>GET /orders/:id</code> — retrieve an order</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="hd"><h3>Pagination</h3><p>Split large lists</p></div>
+            <div class="bd">
+              <p>Use <code>?page=2&amp;page_size=20</code> or cursor‑based <code>?after=...</code>.</p>
+              <pre>{
+  "data": [...],
+  "page": 2,
+  "page_size": 20,
+  "total": 137
+}</pre>
+            </div>
+          </div>
+          <div class="card">
+            <div class="hd"><h3>Idempotency</h3><p>Safe retries for writes</p></div>
+            <div class="bd">
+              <p>Send a unique key (e.g., <code>Idempotency-Key</code>) so a retry doesn’t double‑order.</p>
+              <pre>POST /orders
+Idempotency-Key: a1b2c3
+{...}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="tab" id="tab-quiz">
+      <div id="quizRoot" class="grid" style="gap:16px;"></div>
+    </section>
+
+    <!-- GLOSSARY -->
+    <section class="tab" id="tab-glossary">
+      <div class="card">
+        <div class="hd"><h3>Glossary</h3><p>Keep this open while discussing</p></div>
+        <div class="bd grid cols-2">
+          <div class="card"><div class="bd"><strong>Endpoint</strong><div class="muted">A specific URL where you send a request (e.g., <code>/pizza</code>).</div></div></div>
+          <div class="card"><div class="bd"><strong>Method</strong><div class="muted">The action you want (GET, POST, etc.).</div></div></div>
+          <div class="card"><div class="bd"><strong>Header</strong><div class="muted">Metadata like auth, content type.</div></div></div>
+          <div class="card"><div class="bd"><strong>Body</strong><div class="muted">The payload you send, often JSON (e.g., order pizzas).</div></div></div>
+          <div class="card"><div class="bd"><strong>Status code</strong><div class="muted">3‑digit number describing the result.</div></div></div>
+          <div class="card"><div class="bd"><strong>SDK</strong><div class="muted">A library that wraps HTTP calls.</div></div></div>
+          <div class="card"><div class="bd"><strong>Pagination</strong><div class="muted">Breaking long lists into pages.</div></div></div>
+          <div class="card"><div class="bd"><strong>Rate limit</strong><div class="muted">Max requests allowed in a time window.</div></div></div>
+          <div class="card"><div class="bd"><strong>Webhook</strong><div class="muted">Kitchen calls your URL with events.</div></div></div>
+          <div class="card"><div class="bd"><strong>OAuth</strong><div class="muted">User‑granted access flow.</div></div></div>
+          <div class="card"><div class="bd"><strong>Idempotency</strong><div class="muted">Same request safely retried.</div></div></div>
+          <div class="card"><div class="bd"><strong>Versioning</strong><div class="muted">Evolving APIs without breaking clients.</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>Built for a friendly, non‑technical walkthrough. All data is local & simulated.</footer>
+  </main>
+
+  <script>
+    // --- Tabs ---
+    const tabButtons=[...document.querySelectorAll('.tab-btn')];
+    const tabs=[...document.querySelectorAll('.tab')];
+    function activateTab(name){tabs.forEach(t=>t.classList.toggle('active',t.id==='tab-'+name));tabButtons.forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name))}
+    tabButtons.forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));
+
+    // --- Request Builder ---
+    const el={
+      method:document.getElementById('method'),
+      baseUrl:document.getElementById('baseUrl'),
+      path:document.getElementById('path'),
+      apiKey:document.getElementById('apiKey'),
+      requireKey:document.getElementById('requireKey'),
+      contentType:document.getElementById('contentType'),
+      body:document.getElementById('body'),
+      bodyBlock:document.getElementById('bodyBlock'),
+      sim429:document.getElementById('sim429'),
+      sendBtn:document.getElementById('sendBtn'),
+      copyCurl:document.getElementById('copyCurl'),
+      methodUrlPill:document.getElementById('methodUrlPill'),
+      rawRequest:document.getElementById('rawRequest'),
+      respStatus:document.getElementById('respStatus'),
+      respBody:document.getElementById('respBody'),
+      respHint:document.getElementById('respHint'),
+    };
+
+    function fullUrl(){const base=(el.baseUrl.value||'').replace(/\/$/,'');const p=el.path.value||'';return base+(p.startsWith('/')?p:'/'+p)}
+    function headersObj(){const h={};if(["POST","PUT","PATCH"].includes(el.method.value))h['Content-Type']=el.contentType.value;if(el.requireKey.checked)h['Authorization']='Bearer '+(el.apiKey.value||'rk_test_12345');return h}
+    function pretty(o){try{return JSON.stringify(o,null,2)}catch{return String(o)}}
+    function curl(){const headerFlags=Object.entries(headersObj()).map(([k,v])=>`-H "${k}: ${v}"`).join(' ');const dataFlag=["POST","PUT","PATCH"].includes(el.method.value)?`-d '${el.body.value||'{}'}'`:'';return `curl -X ${el.method.value} ${headerFlags?headerFlags+' ':''}${dataFlag} ${fullUrl()}`.trim()}
+    function updateVisibility(){const showBody=["POST","PUT","PATCH"].includes(el.method.value);el.bodyBlock.style.display=showBody?'grid':'none'}
+    function renderRequest(){const hLines=Object.entries(headersObj()).map(([k,v])=>`${k}: ${v}`).join('\n');const body=["POST","PUT","PATCH"].includes(el.method.value)?`\n\n${el.body.value}`:'';el.rawRequest.textContent=`${el.method.value} ${fullUrl()} HTTP/1.1\n${hLines}${body}`;el.methodUrlPill.textContent=`${el.method.value} ${fullUrl()}`}
+    function parseBodyOrNull(){const txt=el.body.value.trim();if(!txt)return null;try{return JSON.parse(txt)}catch{return{note:'Body is not valid JSON (sent as raw text in this demo).'}}}
+
+    function fakeApiCall(){
+      el.sendBtn.disabled=true;const hasKey=!el.requireKey.checked||Boolean(el.apiKey.value)||true;
+      setTimeout(()=>{
+        let response={status:200,ok:true,json:{}};const now=new Date().toISOString();
+        if(!hasKey){response={status:401,ok:false,json:{error:'Unauthorized',message:'Missing or invalid API key.'}}}
+        else if(el.sim429.checked){response={status:429,ok:false,json:{error:'Too Many Requests',message:'Busy kitchen; try again later.',retry_after_seconds:30}}}
+        else{
+          const m=el.method.value;const p=el.path.value;
+          if(m==='GET' && p.includes('/pizza')){
+            response.json={data:[
+              {id:'item_101',name:'Margherita',price:4.5},
+              {id:'item_102',name:'Pepperoni',price:4.0},
+              {id:'item_201',name:'Veggie',price:7.5}
+            ],page:1,page_size:3,total:24};
+          } else if(m==='POST' && p.includes('/orders')){
+            response.status=201;response.json=Object.assign({id:'order_104',status:'placed',created_at:now},parseBodyOrNull());
+          } else if(m==='GET' && p.includes('/orders')){
+            response.json={data:[
+              {id:'order_091',status:'preparing'},
+              {id:'order_092',status:'ready'}
+            ],page:1,page_size:2,total:12};
+          } else if(m==='DELETE' && p.includes('/orders')){
+            response.status=204;response.json={success:true};
+          } else {
+            response.json={message:'Demo endpoint: try /pizza or /orders'};
+          }
+        }
+        // render
+        el.respHint.style.display='none';el.respBody.style.display='block';el.respBody.textContent=pretty(response.json);el.respStatus.style.display='inline-block';el.respStatus.textContent=response.status;el.respStatus.className='status '+(response.ok?'ok':'err');el.sendBtn.disabled=false;
+      },600);
+    }
+
+    ;['change','input'].forEach(evt=>{[el.method,el.baseUrl,el.path,el.apiKey,el.requireKey,el.contentType,el.body].forEach(n=>n.addEventListener(evt,()=>{updateVisibility();renderRequest();}))});
+    el.sendBtn.addEventListener('click',()=>{renderRequest();fakeApiCall()});
+    el.copyCurl.addEventListener('click',async()=>{const text=curl();try{await navigator.clipboard.writeText(text);el.copyCurl.textContent='Copied!';setTimeout(()=>el.copyCurl.textContent='⎘ Copy cURL',800)}catch{}});
+
+    updateVisibility();renderRequest();
+
+    // Quiz
+    const quizData=[
+      {q:'What is an API?',options:[{t:'A type of database.',ok:false,why:'Databases store data; APIs are the doors to interact with software.'},{t:'A contract for apps to talk to each other.',ok:true,why:"Yes. It defines requests & responses."},{t:'A programming language.',ok:false,why:'Languages write code; APIs expose functionality.'}]},
+      {q:'Which HTTP method is used to fetch data?',options:[{t:'GET',ok:true,why:'GET retrieves data without changing it.'},{t:'POST',ok:false,why:'POST usually creates something new.'},{t:'DELETE',ok:false,why:'DELETE removes resources.'}]},
+      {q:'Where should an API key usually go?',options:[{t:'In the URL path.',ok:false,why:'Avoid putting secrets in URLs—they can leak in logs.'},{t:'In a header (e.g., Authorization).',ok:true,why:'Best practice is to send sensitive tokens in headers.'},{t:'Inside the file name.',ok:false,why:'Never do this.'}]},
+      {q:'What does status code 404 mean?',options:[{t:'Unauthorized',ok:false,why:'Unauthorized is 401.'},{t:'Not Found',ok:true,why:"The resource doesn’t exist at this URL."},{t:'Too Many Requests',ok:false,why:"That’s 429."}]},
+      {q:'Webhooks vs polling — what’s a benefit of webhooks?',options:[{t:'You get events instantly without constantly checking.',ok:true,why:'Servers push events to you when things happen.'},{t:'You never need a public URL.',ok:false,why:'Webhooks require an endpoint.'},{t:"They’re the same thing.",ok:false,why:'Different patterns.'}]},
+    ];
+    function renderQuiz(){const root=document.getElementById('quizRoot');root.innerHTML='';quizData.forEach((Q,idx)=>{const card=document.createElement('div');card.className='card';const hd=document.createElement('div');hd.className='hd';hd.innerHTML=`<h3>Q${idx+1}. ${Q.q}</h3>`;card.appendChild(hd);const bd=document.createElement('div');bd.className='bd';const grid=document.createElement('div');grid.className='row cols-3';let feedback=document.createElement('div');feedback.className='muted';feedback.style.marginTop='8px';Q.options.forEach((opt)=>{const btn=document.createElement('button');btn.className='btn secondary';btn.textContent=opt.t;btn.addEventListener('click',()=>{feedback.textContent=(opt.ok?'✅ Correct — ':'❌ Not quite — ')+opt.why;});grid.appendChild(btn)});bd.appendChild(grid);bd.appendChild(feedback);card.appendChild(bd);root.appendChild(card)})}
+    renderQuiz();
+  </script>
+</body>
+</html>
